@@ -1,0 +1,10 @@
+# 中间处理产物（PDF 渲染 / 二维码提取），不入库
+pdf-render/
+pdf-render4x/
+qr-src/
+qr-out/
+embedded/
+qr-final/
+qr-opt/
+qr-base64*.json
+index.html.bak
