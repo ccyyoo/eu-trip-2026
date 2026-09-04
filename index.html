@@ -165,6 +165,12 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .day-route-s{font-size:11px;color:var(--text-2);line-height:1.5}
 .day-route-cities{color:var(--text-muted);font-size:10px;margin-top:4px}
 
+.locked{margin:14px 0 2px;padding:10px 12px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)}
+.locked-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;margin-bottom:6px}
+.locked-row{display:flex;gap:8px;font-size:12px;line-height:1.5;padding:3px 0}
+.locked-cat{flex-shrink:0;font-weight:700;color:var(--accent-2);white-space:nowrap}
+.locked-val{color:var(--text);word-break:break-word}
+
 /* Timeline */
 .timeline{position:relative;padding-left:22px;margin-top:14px}
 .timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border);border-radius:1px}
@@ -389,15 +395,6 @@ footer a{color:var(--text-faint)}
   <div class="weather-grid" id="weather-grid" data-page-node-id="ADCNkjR9HhsBGzdCvBZLhq"></div>
 </section>
 
-<!-- ===== 3. 已确认信息 ===== -->
-<section class="section" data-page-node-id="N1VFEi2zbvu68UwDCQKDTC">
-  <div class="section-head" data-page-node-id="7GextTGZo27o09MbBoSi16">
-    <div class="section-title" data-page-node-id="LLrCrrIybWjLGD9dQ8i4YW">✅ 已确认信息</div>
-    <div class="section-subtitle" data-page-node-id="JItm5xvbWm9suEzGGeJmUK">机票 / 火车 / 酒店 / 门票 · 凭证均在航司/景区 App 或邮件</div>
-  </div>
-  <div class="confirm-grid" id="confirm-grid" data-page-node-id="u7sA0nK5bZ5VBPyF9XdA7a"></div>
-</section>
-
 <!-- ===== 4. 逐日行程 ===== -->
 <section class="section" data-page-node-id="MYVIugQ3erH2A99TPECTSu">
   <div class="section-head" data-page-node-id="J4ieQvsTfWzPoRcGUS4PTZ">
@@ -546,9 +543,11 @@ const EVENTS = [
   { d:'2026-10-03T20:30+02:00', n:'塞纳河游船 Bateaux Mouches', t:'booking', city:'paris' },
   { d:'2026-10-04T09:00+02:00', n:'凡尔赛主宫 (PMP Passport)', t:'booking', city:'paris' },
   { d:'2026-10-04T16:00+02:00', n:'地下墓穴 Catacombes', t:'booking', city:'paris' },
-  { d:'2026-10-05T09:00+02:00', n:'先贤祠 Panthéon (PMP)', t:'booking', city:'paris' },
+  { d:'2026-10-05T09:30+02:00', n:'加尼叶歌剧院 Palais Garnier (待购)', t:'booking', city:'paris' },
+  { d:'2026-10-05T12:00+02:00', n:'橘园 Orangerie (PMP)', t:'booking', city:'paris' },
   { d:'2026-10-05T14:00+02:00', n:'卢浮宫 (PMP)', t:'booking', city:'paris' },
   { d:'2026-10-05T16:00+02:00', n:'⏰ Paris Museum Pass 失效 (10.3 16:00 激活起 48h)', t:'deadline', city:'paris' },
+  { d:'2026-10-06T10:30+02:00', n:'先贤祠 Panthéon (单买 €13)', t:'booking', city:'paris' },
   { d:'2026-10-06T15:30+02:00', n:'蒙马特爱美丽巡礼', t:'booking', city:'paris' },
   { d:'2026-10-07T11:35+02:00', n:'同行人 LIU/MIN 返程 (VN010 CDG→SGN→HKG)', t:'flight', city:'paris' },
   { d:'2026-10-07T14:00+02:00', n:'圆圆 返程 (VN18 CDG→HAN→HKG)', t:'flight', city:'paris' },
@@ -568,176 +567,6 @@ const WEATHER = [
   { date:'10.5', city:'巴黎', country:'france', emoji:'🌧️', t:'17°/10°', desc:'可能阴雨，备伞' },
   { date:'10.6', city:'巴黎', country:'france', emoji:'⛅', t:'18°/11°', desc:'蒙马特上坡路多' },
   { date:'10.7', city:'巴黎', country:'france', emoji:'⛅', t:'18°/10°', desc:'返程日' },
-];
-
-/* ============ 已确认信息 ============ */
-const CONFIRM = [
-  {
-    type:'flight', title:'9/25 23:40 HKG → BCN（去程）',
-    rows:[
-      ['航段 1','HX767 香港 T2 → 曼谷素万那普'],
-      ['航段 2','TK59 曼谷 → 伊斯坦布尔'],
-      ['航段 3','TK1855 伊斯坦布尔 → 巴塞罗那 BCN T1 · <b>17:40 抵达 9/26</b>'],
-      ['航司','土耳其航空 + 香港航空'],
-      ['凭证','航旅纵横 / 航司 App / 邮件'],
-      ['入口','<a href="https://www.turkishairlines.com" target="_blank" rel="noopener">turkishairlines.com</a>'],
-    ],
-    note:'<b>转机注意：</b>曼谷（BKK）06:40 起飞转 15:00 伊斯坦布尔转机，行李直挂无需重取',
-  },
-  {
-    type:'flight', title:'9/30 20:20 BCN → NCE（巴塞飞尼斯）',
-    rows:[
-      ['航班','VY1517 伏林航空'],
-      ['路线','巴塞罗那 BCN T1 → 尼斯蔚蓝海岸 NCE T1'],
-      ['时间','<b>20:20 → 21:45</b> · 1h25m'],
-      ['凭证','航旅纵横 / 航司 App'],
-      ['入口','<a href="https://www.vueling.com" target="_blank" rel="noopener">vueling.com</a>'],
-    ],
-    note:'21:45 落地后打车去机场民宿 52 Boulevard René Cassin（10–15 分钟）',
-  },
-  {
-    type:'flight', title:'10/7 14:00 CDG → HKG（圆圆返程）',
-    rows:[
-      ['航班','VN18 越南航空'],
-      ['路线','巴黎 CDG T2C → 河内内排 HAN T2'],
-      ['时间','<b>10/7 14:00 → 10/8 06:40</b>'],
-      ['航段 2','VN592 河内 → 香港 HKG T1 · 10/8 10:25 → 13:30'],
-      ['凭证','航旅纵横 / 航司 App'],
-      ['入口','<a href="https://www.vietnamairlines.com" target="_blank" rel="noopener">vietnamairlines.com</a>'],
-    ],
-    note:'T2C 航站楼 · 提前 3h 值机（11:00）',
-  },
-  {
-    type:'flight', title:'10/7 11:35 CDG → HKG（同行人 LIU/MIN 返程）',
-    rows:[
-      ['航班','VN010 越南航空'],
-      ['路线','巴黎 CDG T2C → 胡志明市 SGN T2'],
-      ['时间','<b>10/7 11:35 → 10/8 04:50</b>'],
-      ['航段 2','VN594 SGN → 香港 HKG T1 · 10/8 13:35 → 17:25'],
-      ['凭证','航旅纵横 / 航司 App'],
-    ],
-    note:'同行人 11:35 起飞，比圆圆早 2h25m · 详见 D12 行程',
-  },
-  {
-    type:'train', title:'10/3 07:55 Nice Ville → Paris Gare de Lyon',
-    rows:[
-      ['车次','TGV Train 6188'],
-      ['时间','<b>07:55 → 13:50</b> · 5h55m'],
-      ['座位','5车 584号 (二等)'],
-      ['已购','SNCF Connect'],
-      ['凭证','SNCF App / 邮件 PDF'],
-      ['入口','<a href="https://www.sncf-connect.com" target="_blank" rel="noopener">sncf-connect.com</a>'],
-    ],
-    note:'06:30 ibis 退房 → 06:40 打车老港 → Nice-Ville 站',
-  },
-  {
-    type:'hotel', title:'9/26 巴塞罗那西班牙广场英迪格酒店 (1晚)',
-    rows:[
-      ['地址','Plaça Espanya 附近 · 步行 5–8 分钟至 Pestana Arena'],
-      ['房型','标准大床房 · 1晚'],
-      ['凭证','携程订单 / 酒店 App'],
-    ],
-    note:'9/27 早上退房，步行 5–8 分钟换到 Pestana Arena',
-  },
-  {
-    type:'hotel', title:'9/27–9/30 巴塞罗那佩斯塔纳阿雷纳酒店 (3晚)',
-    rows:[
-      ['地址','Plaça Espanya 附近 · 与英迪格相邻'],
-      ['房型','标准客房 · 3晚（9/27、9/28、9/29）'],
-      ['凭证','携程订单 / 酒店 App'],
-    ],
-    note:'9/30 退房寄存行李，下午 16:20 Aerobus 去机场',
-  },
-  {
-    type:'hotel', title:'9/30 尼斯机场民宿 (1晚)',
-    rows:[
-      ['地址','52 Boulevard René Cassin, Nice 06200'],
-      ['入住','仅 9/30 一晚（21:45 落地后入住）'],
-    ],
-    note:'10/1 早上 08:00 打车至 ibis 存包',
-  },
-  {
-    type:'hotel', title:'10/1–10/3 尼斯中心火车站宜必思尚品酒店 (2晚)',
-    rows:[
-      ['地址','ibis Styles Nice Vieux Port · 8 rue Emmanuel Philibert'],
-      ['房型','标准双人间 · 2晚'],
-      ['凭证','携程订单 / 酒店 App'],
-    ],
-    note:'10/3 06:30 退房打车去 Nice-Ville 站乘 TGV',
-  },
-  {
-    type:'hotel', title:'10/3–10/7 巴黎 14区公寓 (4晚)',
-    rows:[
-      ['地址','3 Rue Lecuirot, 75014 · M4 Alésia 站'],
-      ['房型','公寓 · 4晚（10/3、10/4、10/5、10/6）'],
-      ['凭证','Airbnb 订单 / 房东邮件'],
-    ],
-    note:'最后一天 06:00 退房去机场',
-  },
-  {
-    type:'ticket', title:'圣家堂 Sagrada Familia · 9/28 15:15',
-    rows:[
-      ['票种','General · 2人已购'],
-      ['价格','€24 × 2 = €48（学生票）'],
-      ['入场','诞生立面 (carrer de la Marina)'],
-      ['凭证','sagradafamilia.org 邮件 QR'],
-      ['入口','<a href="https://sagradafamilia.org" target="_blank" rel="noopener">sagradafamilia.org</a>'],
-    ],
-    note:'提前 15 分钟安检 · 14:43 抵达 · 实名制不可退改',
-  },
-  {
-    type:'ticket', title:'桂尔公园 Park Güell · 9/28 09:30',
-    rows:[
-      ['票种','General · 2人已购'],
-      ['价格','€18 × 2 = €36'],
-      ['入场','最早场 09:30'],
-      ['凭证','parkguell.barcelona 邮件 QR'],
-      ['入口','<a href="https://parkguell.barcelona" target="_blank" rel="noopener">parkguell.barcelona</a>'],
-    ],
-    note:'Vallcarca 站下车走 Baixada de la Glòria 扶梯上山',
-  },
-  {
-    type:'ticket', title:'毕加索博物馆 · 9/27 15:00',
-    rows:[
-      ['票种','General Admission · 2人已购'],
-      ['价格','€14 × 2 = €28'],
-      ['凭证','museupicassobcn.cat 邮件 QR'],
-      ['入口','<a href="https://museupicassobcn.cat" target="_blank" rel="noopener">museupicassobcn.cat</a>'],
-    ],
-    note:'地址 C/ Montcada, 15-23 · 蓝色时期+《宫娥》约 90min',
-  },
-  {
-    type:'ticket', title:'加泰音乐宫开幕音乐会 · 9/28 19:00',
-    rows:[
-      ['票种','Zona General · 1P 半圆厅第5排 31+33 座'],
-      ['价格','€20 × 2 = €40 + €6 佣金 = €46'],
-      ['地址','Palau de la Música Catalana, C/ Palau de la Música 4-6, 08003'],
-      ['凭证','palaumusica.cat 邮件 QR'],
-      ['入口','<a href="https://palaumusica.cat" target="_blank" rel="noopener">palaumusica.cat</a>'],
-    ],
-    note:'Pau Casals 诞辰 150 周年 · 合唱+大提琴 · 压轴《欢乐颂》· 开演前可拍彩窗，演出中禁拍',
-  },
-  {
-    type:'ticket', title:'Paris Museum Pass 48h · 10/3 16:00 激活',
-    rows:[
-      ['票种','PMP 48h · 2人已购'],
-      ['价格','€87.48 含税'],
-      ['激活','<b>10/3 16:00 在奥赛首次刷码</b>'],
-      ['失效','<b>10/5 16:00 自动失效</b>（48h 连续小时制）'],
-      ['覆盖','奥赛+凯旋门+凡尔赛 Passport+橘园+卢浮宫+先贤祠+海军府 · 不含墓穴/游船'],
-      ['入口','<a href="https://www.parismuseumpass.fr" target="_blank" rel="noopener">parismuseumpass.fr</a>'],
-    ],
-    note:'10/5 卢浮宫 14:00 入场，必须在 16:00 失效前完成',
-  },
-  {
-    type:'ticket', title:'卢浮宫 Louvre · 10/5 14:00（绑定 PMP）',
-    rows:[
-      ['票种','Carte PMP · 2人（绑定通票）'],
-      ['入场','Porte des Lions 通道（17:00 停入）'],
-      ['凭证','PDF 二维码 · 入场扫描'],
-    ],
-    note:'15:15 通票死前冲三宝（蒙娜丽莎/胜利女神/汉谟拉比）',
-  },
 ];
 
 /* ============ 逐日行程 ============ */
@@ -911,37 +740,36 @@ const DAYS = [
     ],
     dayNote:'周日出发前查 RATP (RER C 易工程) · 凡尔赛交通三种对比：① RER C (推荐) ② 蒙帕纳斯 N 线 ③ St-Lazare L 线',
   },
-  {
+    {
     id:'D10', date:'2026-10-05', dateLabel:'10月5日 周一', city:'巴黎', country:'france',
-    subtitle:'先贤祠 + 海军府 + 卢浮宫 🎫',
+    subtitle:'歌剧院 + 橘园 + 卢浮宫 🎫',
     color:'#264653',
-    route:['Alésia','Panthéon','Orangerie','海军府','Café Marly','卢浮宫'],
-    routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Al%C3%A9sia,+Paris&travelmode=transit&waypoints=Panth%C3%A9on%7CMus%C3%A9e+de+l%27Orangerie%7CH%C3%B4tel+de+la+Marine%7CCaf%C3%A9+Marly%7CMus%C3%A9e+du+Louvre',
+    route:['Alésia','Opéra Garnier','橘园','海军府(弹性)','卢浮宫'],
+    routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Mus%C3%A9e+du+Louvre&travelmode=transit&waypoints=Palais+Garnier%7CMus%C3%A9e+de+l%27Orangerie%7CH%C3%B4tel+de+la+Marine',
     events:[
-      {time:'09:00',title:'先贤祠 Panthéon ⚜',desc:'RER B Luxembourg · 10:00 开 · 傅科摆 + 墓室 · 通票含',tag:'PMP',cls:'booked'},
-      {time:'10:30',title:'橘园 Musée de l\'Orangerie 🌸',desc:'协和广场侧 · 莫奈睡莲 1h30m · 通票 · 预约 10:30',tag:'PMP',cls:'booked'},
-      {time:'12:15',title:'海军府 Hôtel de la Marine ⚓',desc:'协和广场旁 · 鎏金沙龙 + 露台看铁塔 · 中文导览含在票内 · 通票含 · 预约 12:15 场',tag:'PMP',cls:'booked'},
-      {time:'13:15',title:'Café Marly 午餐 🍴',desc:'卢浮宫 Rivoli 侧拱廊座 · 看金字塔',tag:null},
-      {time:'14:00',title:'卢浮宫 Louvre 🖼',desc:'预约 14:00 场 · 15:15 通票死前冲三宝 (蒙娜丽莎/胜利女神/汉谟拉比) · 17:00 停入',tag:'PMP',cls:'booked'},
+      {time:'09:30',title:'加尼叶歌剧院 Palais Garnier 🎭',desc:'周一开放 10:00–17:00 · 大楼梯 + 夏加尔天花板 · €14 单买(不在通票)',tag:'待购',cls:'booked'},
+      {time:'12:00',title:'橘园 (Orangerie) 🌸',desc:'协和广场侧 · 莫奈睡莲 1h30m · 通票含 · 预约 12:00',tag:'PMP',cls:'booked'},
+      {time:'13:00',title:'海军府 Hôtel de la Marine ⚓ (弹性)',desc:'看情况去 · 协和广场旁 · 鎏金沙龙 + 露台看铁塔 · 通票含',tag:'PMP',cls:'booked'},
+      {time:'14:00',title:'卢浮宫 Louvre 🖼',desc:'预约 14:00 场 · 16:00 通票失效前冲三宝 · 17:00 停入',tag:'PMP',cls:'booked'},
       {time:'16:10',title:'M4 回 Alésia 歇脚 → 18:00 14区轻晚餐',desc:'通票 16:00 自动失效 (10.3 16:00 激活起 48h)',tag:null,cls:'transit'},
     ],
-    dayNote:'闭馆核对：10.5 周一 ✅ 卢浮宫开(17:00停入) ✅ 橘园开(17:15停入) ✅ 先贤祠开(17:15停入) · 奥赛/凡尔赛周一闭→已避开 · 海军府 10:30-19:00 周一开 ✅',
+    dayNote:'⚠️ 先贤祠已挪至 10.6 · 歌剧院周一 10:00–17:00 开放，遇演出可能关闭，提前官网确认 · 橘园预约 12:00 场',
   },
-  {
+    {
     id:'D11', date:'2026-10-06', dateLabel:'10月6日 周二', city:'巴黎', country:'france',
-    subtitle:'蒙马特 + 爱美丽巡礼 🎬',
+    subtitle:'卢森堡公园 + 先贤祠 + 蒙马特爱美丽巡礼 🎬',
     color:'#264653',
-    route:['Alésia','卢森堡公园','玛黑区','老佛爷','蒙马特','圣心大教堂'],
-    routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Sacr%C3%A9-C%C5%93ur,+Paris&travelmode=transit&waypoints=Jardin+du+Luxembourg%7CPlace+des+Vosges%7CLe+Marais%7CGaleries+Lafayette%7CMontmartre',
+    route:['Alésia','卢森堡公园','先贤祠','玛黑区','蒙马特','圣心大教堂'],
+    routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Sacr%C3%A9-C%C5%93ur,+Paris&travelmode=transit&waypoints=Jardin+du+Luxembourg%7CPanth%C3%A9on%7CLe+Marais%7CMontmartre',
     events:[
-      {time:'09:30',title:'卢森堡公园散步 🌳',desc:'美第奇喷泉 → 参议员宫 → 栗子树大道 → 西门外 · 免费',tag:null},
-      {time:'11:00',title:'玛黑 Citywalk 加长 🚶',desc:'孚日广场 Place des Vosges → Rue des Francs-Bourgeois (Merci/Ofr.) → Vieille du Temple 古着 → Village Saint-Paul 古董院',tag:null},
-      {time:'13:00',title:'玛黑午餐 🥙',desc:'Rue des Rosiers · L\'As du Fallafel / Miznon',tag:null},
-      {time:'14:00',title:'老佛爷 (可选·退税 15min)',desc:'需退税则 14:00–14:45 办完即走 · 不退税→直接删 · 玛黑后直奔蒙马特',tag:null},
-      {time:'15:30',title:'蒙马特 + 天使爱美丽巡礼 🎬',desc:'① Café des Deux Moulins (15 Rue Lepic · 入内喝一杯) ② Rue des Abbesses 蓝绿店+杂货店 ③ Place du Tertre 画家街 ④ La Maison Rose 粉红屋',tag:null},
-      {time:'18:30',title:'圣心 Sacré-Cœur + 晚餐 ⛪',desc:'主殿免费 · 登顶 €7 拍日落 + 全城灯海 · 山脚 Le Consulat 喝一杯',tag:null},
+      {time:'09:00',title:'卢森堡公园散步 🌳',desc:'美第奇喷泉 → 参议员宫 → 栗子树大道 → 西门外 · 免费',tag:null},
+      {time:'10:30',title:'先贤祠 Panthéon ⚜',desc:'卢森堡公园旁步行 5 分钟 · 傅科摆 + 墓室 · 通票已失效 → 单买 €13',tag:'待购',cls:'booked'},
+      {time:'12:00',title:'玛黑 Citywalk + 午餐 🚶',desc:'孚日广场 → Rue des Francs-Bourgeois → 古着 → Rue des Rosiers Fallafel',tag:null},
+      {time:'14:00',title:'老佛爷 (可选·退税 15min)',desc:'需退税则办完即走 · 不退税→直奔蒙马特',tag:null},
+      {time:'15:30',title:'蒙马特 + 天使爱美丽巡礼 🎬',desc:'① Café des Deux Moulins ② Rue des Abbesses ③ Place du Tertre ④ La Maison Rose',tag:null},
+      {time:'18:30',title:'圣心 Sacré-Cœur + 晚餐 ⛪',desc:'主殿免费 · 登顶 €7 · 山脚 Le Consulat 喝一杯',tag:null},
     ],
-    dayNote:'不回头路：卢森堡 (西南) → 玛黑 (东北) → 老佛爷 (西北) → 蒙马特 (正北收尾) · 蒙马特 15:30 上山避开旅行团高峰',
+    dayNote:'先贤祠从 10.5 挪至今日 (10.6 周二开放) · 通票 10.5 16:00 已失效，先贤祠单买 €13 · 不回头路：卢森堡→先贤祠→玛黑→蒙马特',
   },
   {
     id:'D12', date:'2026-10-07', dateLabel:'10月7日 周三', city:'巴黎', country:'france',
@@ -961,6 +789,58 @@ const DAYS = [
     dayNote:'同行人 11:35 起飞比圆圆早 2h25m · 推荐方案：一起 06:30 RER B 去 CDG，圆圆 T2C 候机区等 3.5h（比进城往返省心）· 同行人订单号见航旅纵横',
   },
 ];
+
+/* ============ 已锁定信息（嵌入每天行程） ============ */
+const LOCKED = {
+  'D1': [
+    {cat:'✈️ 机票', val:'TK1855 伊斯坦布尔→BCN T1 · 17:40 抵达'},
+    {cat:'🏨 住宿', val:'英迪格酒店 · 标准大床房 · 1晚'},
+  ],
+  'D2': [
+    {cat:'🎫 门票', val:'毕加索博物馆 15:00 · 2人 €28'},
+    {cat:'🏨 住宿', val:'Pestana Arena · 标准客房'},
+  ],
+  'D3': [
+    {cat:'🎫 门票', val:'桂尔 09:30 €36 · 圣家堂 15:15 €48 · 巴特罗 13:00(待购) · 音乐宫 19:00 €46'},
+    {cat:'🏨 住宿', val:'Pestana Arena · 标准客房'},
+  ],
+  'D4': [
+    {cat:'🎫 门票', val:'蒙特惠奇城堡 €12(待购) · MNAC 17:00 €12(待购)'},
+    {cat:'🏨 住宿', val:'Pestana Arena · 标准客房'},
+  ],
+  'D5': [
+    {cat:'✈️ 机票', val:'VY1517 BCN T1→NCE T1 · 20:20→21:45'},
+    {cat:'🏨 住宿', val:'机场民宿 52 Boulevard René Cassin'},
+  ],
+  'D6': [
+    {cat:'🏨 住宿', val:'ibis Styles Nice Vieux Port · 8 rue Emmanuel Philibert'},
+    {cat:'🎫 活动', val:'SUP 桨板 15:00 (待约 €40–60/人)'},
+  ],
+  'D7': [
+    {cat:'🏨 住宿', val:'ibis Styles Nice Vieux Port'},
+    {cat:'🎫 活动', val:'Crémat 品酒 15:00 (待约)'},
+  ],
+  'D8': [
+    {cat:'🚄 车票', val:'TGV 6188 尼斯→巴黎 · 07:55→13:50 · 5车584号'},
+    {cat:'🏨 住宿', val:'3 Rue Lecuirot, 75014 公寓'},
+    {cat:'🎫 门票', val:'奥赛 16:00(PMP激活) · 凯旋门 18:00(PMP) · 游船 20:30(€20待购)'},
+  ],
+  'D9': [
+    {cat:'🎫 门票', val:'凡尔赛 09:00(PMP) · 墓穴 16:00(€31待购)'},
+    {cat:'🏨 住宿', val:'3 Rue Lecuirot, 75014 公寓'},
+  ],
+  'D10': [
+    {cat:'🎫 门票', val:'歌剧院 €14(单买) · 橘园 12:00(PMP) · 海军府(弹性·PMP) · 卢浮宫 14:00(PMP)'},
+    {cat:'🏨 住宿', val:'3 Rue Lecuirot, 75014 公寓'},
+  ],
+  'D11': [
+    {cat:'🎫 门票', val:'先贤祠 €13(单买，通票已失效)'},
+    {cat:'🏨 住宿', val:'3 Rue Lecuirot, 75014 公寓'},
+  ],
+  'D12': [
+    {cat:'✈️ 机票', val:'同行人 VN010 11:35 · 圆圆 VN18 14:00'},
+  ],
+};
 
 /* ============ 待办清单 ============ */
 const TODOS = [
@@ -1073,20 +953,6 @@ function renderWeather() {
   `).join('');
 }
 
-// 渲染已确认信息
-function renderConfirm() {
-  const root = document.getElementById('confirm-grid');
-  root.innerHTML = CONFIRM.map(c => `
-    <div class="confirm-card ${c.type}">
-      <div class="confirm-head">
-        <div class="confirm-title">${c.title}</div>
-      </div>
-      ${c.rows.map(r => `<div class="confirm-row"><span class="lbl">${r[0]}</span><span class="val">${r[1]}</span></div>`).join('')}
-      ${c.note ? `<div class="confirm-note">${c.note}</div>` : ''}
-    </div>
-  `).join('');
-}
-
 // 渲染逐日行程
 function renderDays() {
   const root = document.getElementById('days');
@@ -1113,6 +979,7 @@ function renderDays() {
           <div class="day-route-s">${d.route.join(' → ')}</div>
           <div class="day-route-cities">${d.events.length} 个时间点 · 详情见下方</div>
         </div>
+        ${LOCKED[d.id] ? `<div class="locked"><div class="locked-title">🔒 已锁定</div>${LOCKED[d.id].map(l => `<div class="locked-row"><span class="locked-cat">${l.cat}</span><span class="locked-val">${l.val}</span></div>`).join('')}</div>` : ''}
         <div class="timeline">
           ${d.events.map(e => `
             <div class="evt ${e.cls || ''}">
@@ -1150,7 +1017,6 @@ function init() {
   updateCountdown();
   setInterval(updateCountdown, 1000);
   renderWeather();
-  renderConfirm();
   renderDays();
   renderTodo();
   // 默认展开第一天
