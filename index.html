@@ -198,6 +198,30 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .evt-tag.todo{background:var(--accent)}
 .evt-meta{font-size:10px;color:var(--text-muted);margin-top:3px}
 
+/* ===== 附近餐厅推荐 ===== */
+.rest-block{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border)}
+.rest-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:8px}
+.rest-t{font-size:12px;font-weight:700;color:var(--text)}
+.rest-sub{font-size:10px;color:var(--text-muted);white-space:nowrap}
+.rest-tips{font-size:10.5px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;padding:6px 9px;background:var(--warn-bg);border-radius:6px}
+.rest-list{display:flex;flex-direction:column;gap:6px}
+.rest-card{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border)}
+.rest-badge{flex-shrink:0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:46px;padding:5px 6px;border-radius:7px;font-weight:700;line-height:1.15}
+.rest-badge .rb-r{font-size:14px}
+.rest-badge .rb-star{font-size:9px;opacity:.9}
+.rest-badge .rb-rc{font-size:8.5px;opacity:.8;margin-top:1px}
+.rb-hi{background:var(--success-bg);color:var(--success)}
+.rb-mid{background:var(--france-bg);color:var(--france)}
+.rb-low{background:var(--surface);color:var(--text-muted)}
+.rest-info{flex:1;min-width:0}
+.rest-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.35}
+.rest-name a{color:inherit;text-decoration:none}
+.rest-name a:hover{color:var(--accent-2)}
+.rest-meta{font-size:10.5px;color:var(--text-muted);margin-top:2px}
+.rest-note{font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.5}
+.rest-tag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:3px;background:var(--nice-bg);color:var(--nice);font-weight:700;margin-left:6px;vertical-align:1px;letter-spacing:.3px}
+.rest-tag.gold{background:var(--warn-bg);color:var(--warn)}
+
 /* ===== Todo ===== */
 .todo-card{background:var(--surface);border-radius:var(--radius);padding:6px 16px;box-shadow:var(--shadow)}
 .todo{display:flex;gap:10px;padding:11px 0;border-bottom:1px dashed var(--border);font-size:13px;line-height:1.5}
@@ -874,6 +898,8 @@ const DAYS = [
       {time:'07:30',title:'Alésia M4 → St-Michel 换 RER C',desc:'RER C 方向 VICK/VITY → Versailles Château RG · 约 50min · 步行 7min 到宫门',tag:'RER C',cls:'transit'},
       {time:'09:00',title:'凡尔赛主宫 🏰',desc:'预约 09:00 场 · 通票 Passport 含小特里亚农 + 花园',tag:'PMP',cls:'booked',
        qrs:[
+         { img:'pmp_p0', label:'PMP 通票 48h', name:'CHEN YUANYUAN', wide:true },
+         { img:'pmp_p1', label:'PMP 通票 48h', name:'LIU MIN', wide:true },
          { img:'versailles_p0', label:'凡尔赛 10/4 09:00', name:'CHEN YUANYUAN', wide:true },
          { img:'versailles_p1', label:'凡尔赛 10/4 09:00', name:'LIU MIN', wide:true },
        ]},
@@ -895,14 +921,18 @@ const DAYS = [
       {time:'09:30',title:'加尼叶歌剧院 Palais Garnier 🎭',desc:'周一开放 10:00–17:00 · 大楼梯 + 夏加尔天花板 · €14 单买(不在通票)',tag:'待购',cls:'booked'},
       {time:'12:00',title:'橘园 (Orangerie) 🌸',desc:'协和广场侧 · 莫奈睡莲 1h30m · 通票含 · 预约 12:00',tag:'PMP',cls:'booked',
        qrs:[
+         { img:'pmp_p0', label:'PMP 通票 48h', name:'CHEN YUANYUAN', wide:true },
+         { img:'pmp_p1', label:'PMP 通票 48h', name:'LIU MIN', wide:true },
          { img:'orangerie_p0', label:'橘园 10/5 12:00', name:'CHEN YUANYUAN', wide:true },
          { img:'orangerie_p1', label:'橘园 10/5 12:00', name:'LIU MIN', wide:true },
        ]},
       {time:'13:00',title:'海军府 Hôtel de la Marine ⚓ (弹性)',desc:'看情况去 · 协和广场旁 · 鎏金沙龙 + 露台看铁塔 · 通票含',tag:'PMP',cls:'booked'},
       {time:'14:00',title:'卢浮宫 Louvre 🖼',desc:'预约 14:00 场 · 16:00 通票失效前冲三宝 · 17:00 停入',tag:'PMP',cls:'booked',
        qrs:[
-         { img:'louvre_p0', label:'卢浮宫 10/5 14:00', name:'CHEN YUANYUAN' },
-         { img:'louvre_p1', label:'卢浮宫 10/5 14:00', name:'LIU MIN' },
+         { img:'pmp_p0', label:'PMP 通票 48h', name:'CHEN YUANYUAN', wide:true },
+         { img:'pmp_p1', label:'PMP 通票 48h', name:'LIU MIN', wide:true },
+         { img:'louvre_p0', label:'卢浮宫 10/5 14:00', name:'CHEN YUANYUAN', wide:true },
+         { img:'louvre_p1', label:'卢浮宫 10/5 14:00', name:'LIU MIN', wide:true },
        ]},
       {time:'16:10',title:'M4 回 Alésia 歇脚 → 18:00 14区轻晚餐',desc:'通票 16:00 自动失效 (10.3 16:00 激活起 48h)',tag:null,cls:'transit'},
     ],
@@ -942,6 +972,91 @@ const DAYS = [
     dayNote:'同行人 11:35 起飞比圆圆早 2h25m · 推荐方案：一起 06:30 RER B 去 CDG，圆圆 T2C 候机区等 3.5h（比进城往返省心）· 同行人订单号见航旅纵横',
   },
 ];
+
+/* ============ 附近餐厅（按 Google 评分降序，避开游客陷阱） ============ */
+const RESTAURANTS = {
+  D1:{ area:'西班牙广场 / 英迪格酒店', tips:'首晚别跨区：酒店步行 10 分钟内解决；西班牙广场两侧游客店多，往 Hostafrancs 方向走 2 条街价格降两成', list:[
+    { n:'La Terraza Miró', r:4.6, rc:3489, c:'加泰菜 · 屋顶露台', p:'€', note:'本地人聚餐点，屋顶能望魔幻喷泉方向，首晚轻松之选', tag:'本地人常去' },
+    { n:'Taps Barcelona', r:4.7, rc:1541, c:'地中海 tapas', p:'€€', note:'章鱼/炸丸子/芝士杏仁，评价很稳' },
+    { n:'Filigrana', r:4.4, rc:600, c:'地中海 · 现代', p:'€€€', note:'西班牙广场旁，环境好适合落脚后第一顿' },
+    { n:'Can Lampazas', r:4.3, rc:4010, c:'加利西亚章鱼', p:'€€', note:'Pulpo 是招牌，本地家庭聚餐地' },
+  ]},
+  D2:{ area:'哥特区 / Born', tips:'避开兰布拉主街“6 国语言菜单”的店；人塔结束往 Born 巷子里走', list:[
+    { n:'Cal Pep', r:4.6, rc:null, c:'海鲜 tapas · 无菜单', p:'€€€', note:'本地人排队神店，看当日食材点单，海鲜是灵魂', tag:'本地人常去' },
+    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧 + 罐头小吃', p:'€', note:'百年 cava 吧，anchovies 配自家起泡酒', tag:'百年老店' },
+    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'年轻人聚集，蘑菇牛肝菌 tapas 出名' },
+    { n:'Montiel', r:4.4, rc:null, c:'加泰菜', p:'€€€', note:'Born 巷内安静小店，品质稳定' },
+    { n:'7 Portes', r:4.3, rc:null, c:'1836 年海鲜饭', p:'€€€', note:'全城最老餐厅之一，海鲜饭按锅出', tag:'百年老店' },
+  ]},
+  D3:{ area:'Gràcia 午餐 / 圣家堂-Eixample', tips:'圣家堂正门 50 米内全是游客店；Gràcia 是本地人食堂，桂尔下山顺路吃', list:[
+    { n:'Paisano Bistró', r:4.8, rc:2369, c:'意 / 地中海', p:'€€', note:'圣家堂附近评分最高，健康风 + 素食可选' },
+    { n:'The Sopa Boba', r:4.7, rc:1343, c:'地中海 tapas', p:'€€', note:'Eixample 本地 tapas 代表' },
+    { n:'Con Gracia', r:4.7, rc:768, c:'加泰菜 · 现代', p:'€€€', note:'Gràcia 高分加泰菜，适合下山午餐' },
+    { n:'Viblioteca', r:4.6, rc:1209, c:'自然酒 + tapas', p:'€€', note:'Gràcia 酒馆，边吃边挑酒' },
+    { n:'Gasterea', r:4.6, rc:1086, c:'巴斯克 tapas', p:'€€', note:'Gràcia 老字号，热 pintxos 口头报菜' },
+    { n:'La Pepita', r:4.5, rc:5571, c:'创意 tapas', p:'€€', note:'牛肉塔塔/章鱼/迷你汉堡，人气超旺' },
+    { n:'El Tastet de l\'Artur', r:4.6, rc:645, c:'加泰烤肉', p:'€€', note:'圣家堂旁加泰烤肉，肉食友好' },
+  ]},
+  D4:{ area:'蒙特惠奇 / Poble-sec', tips:'Carrer de Blai 是 Pintxos 一条街，周日人多；认准牙签计价', list:[
+    { n:'La Tasqueta de Blai', r:4.5, rc:10000, c:'Pintxos 自助', p:'€', note:'Blai 街最火，50+ 种 €1.9 起，牙签按色计价', tag:'本地人最火' },
+    { n:'Koska Taberna', r:4.5, rc:null, c:'巴斯克 pintxos', p:'€€', note:'跳过冷柜，直接点黑板热菜 + Txakoli' },
+    { n:'Blai 9', r:4.5, rc:null, c:'blinis 底 pintxos', p:'€', note:'用 blini/可丽饼做底，视觉系' },
+    { n:'Quimet & Quimet', r:null, rc:null, c:'1914 年罐头海鲜', p:'€€', note:'烟熏三文鱼配松露蜂蜜 montadito 是招牌', tag:'百年老店' },
+    { n:'Can Lampazas', r:4.3, rc:4010, c:'加利西亚章鱼', p:'€€', note:'Poble-sec 老店，Pulpo 必点' },
+  ]},
+  D5:{ area:'哥特区 / 大教堂 / 兰布拉', tips:'波盖利亚市场只顺路看、别在里面吃（游客价）；老城往里走 1 条街', list:[
+    { n:'Cal Pep', r:4.6, rc:null, c:'海鲜 tapas · 无菜单', p:'€€€', note:'同 D2，海鲜 tapas 天花板', tag:'本地人常去' },
+    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧', p:'€', note:'大教堂附近，anchovies + 起泡酒', tag:'百年老店' },
+    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'离大教堂不远，午餐好选' },
+    { n:'7 Portes', r:4.3, rc:null, c:'1836 年海鲜饭', p:'€€€', note:'海港边，海鲜饭按锅', tag:'百年老店' },
+  ]},
+  D6:{ area:'尼斯老城 / 港口', tips:'老城靠海边的店偏游客，往里走（Rue Droite / Rue Raoul Bosio 一带）本地店多', list:[
+    { n:'Chez Acchiardo', r:4.7, rc:3248, c:'家庭南法菜', p:'€€', note:'1927 年起四代传承，daube/烤鱼，提前订', tag:'本地人常去' },
+    { n:'Olive et Artichaut', r:4.6, rc:1080, c:'现代南法 · Bib Gourmand', p:'€€€', note:'米其林必比登，市场食材' },
+    { n:'Chez Pipo', r:4.5, rc:5864, c:'Socca 鹰嘴豆煎饼', p:'€', note:'1923 年起木炭炉 socca，南法灵魂小吃', tag:'百年老店' },
+    { n:'Peixes', r:4.5, rc:2733, c:'海鲜 ceviche', p:'€€', note:'现代海鲜吧，生鱼塔塔 + 自然酒' },
+    { n:'Le Bistrot d\'Antoine', r:4.5, rc:1486, c:'法式 bistro', p:'€€', note:'本地人反复回头的家常 bistro' },
+    { n:'La Merenda', r:4.3, rc:950, c:'无菜单南法菜', p:'€€', note:'无电话无刷卡，黑板手写菜单，现金', tag:'本地人常去' },
+  ]},
+  D7:{ area:'昂蒂布老城 / 港口（晚回尼斯老港）', tips:'昂蒂布港口正对游客的店一般，往里走老城；晚餐回尼斯老港吃', list:[
+    { n:'L\'Ostral', r:4.5, rc:364, c:'地中海海鲜', p:'€€€', note:'昂蒂布口碑海鲜，服务细腻' },
+    { n:'Chez Mô (Albert 1er)', r:null, rc:null, c:'海鲜 + 鱼铺', p:'€€', note:'港口本地人聚集，海鲜拼盘 + 现烤鱼' },
+    { n:'Le Vauban', r:null, rc:null, c:'经典法餐', p:'€€€', note:'老城经典法餐，建议预订' },
+    { n:'Cafe de Turin', r:4.1, rc:5250, c:'1908 年生蚝', p:'€€', note:'尼斯老港生蚝名店，蚝 + 本地酒收尾', tag:'百年老店' },
+    { n:'Chez Pipo', r:4.5, rc:5864, c:'Socca', p:'€', note:'若想吃 socca，回尼斯老港这家最近' },
+  ]},
+  D8:{ area:'奥赛 / 圣日耳曼', tips:'奥赛周边偏游客，圣日耳曼（Rue du Bac 一带）本地店多', list:[
+    { n:'Les Parisiens', r:4.7, rc:1539, c:'法式 bistro', p:'€€€', note:'圣日耳曼高分 bistro，本地人常去' },
+    { n:'Bouillon République', r:4.7, rc:36899, c:'平价法餐', p:'€', note:'传奇 bouillon，排队但超值；区位在 2 区需地铁', tag:'性价比之王' },
+    { n:'Les Antiquaires', r:4.6, rc:10793, c:'法式 bistro', p:'€€€', note:'万评老牌 bistro，油封鸭/牛排出名', tag:'本地人常去' },
+    { n:'Cocorico', r:4.4, rc:2961, c:'法餐', p:'€€', note:'奥赛附近，行程后顺路' },
+    { n:'Café d\'Orsay', r:4.4, rc:2181, c:'博物馆旁简餐', p:'€€', note:'奥赛门口，赶场速食' },
+  ]},
+  D9:{ area:'凡尔赛午餐 / 拉丁区晚餐', tips:'凡尔赛午餐：宫内 Ore（Alain Ducasse 一星，€80）适合纪念日，否则建议自带简餐进花园野餐；⚠️ 拉丁区 Rue de la Huchette 是游客陷阱重灾区，往 St-Séverin 街走 1 条街才是本地店', list:[
+    { n:'Hestia', r:4.9, rc:205, c:'法餐', p:'€€€', note:'拉丁区小馆，评分极高，需预订' },
+    { n:'Maison Cluny', r:4.8, rc:655, c:'法餐 · 精致', p:'€€€€', note:'Cluny 博物馆旁，品质稳' },
+    { n:'Ostra Paris', r:4.8, rc:208, c:'海鲜', p:'€€€', note:'拉丁区海鲜，蚝吧' },
+    { n:'Grains Nobles', r:4.7, rc:558, c:'法餐', p:'€€€', note:'圣米歇尔附近，本地人晚餐' },
+    { n:'La Petite Bouclerie', r:4.6, rc:794, c:'法餐', p:'€', note:'平价法餐，性价比高' },
+  ]},
+  D10:{ area:'歌剧院 / 橘园 / 卢浮宫', tips:'卢浮宫玻璃金字塔附近全是游客店，往 Palais Royal 拱廊走 3 分钟', list:[
+    { n:'Palais Royal Restaurant', r:4.6, rc:570, c:'米其林二星 · 地中海', p:'€€€€', note:'希腊主厨融合法餐，含亚洲胃' },
+    { n:'Baguett\'s Café', r:4.5, rc:1815, c:'早午餐 / 三明治', p:'€', note:'赶场速食首选，外带三明治+咖啡' },
+    { n:'Daroco Bourse', r:4.3, rc:4789, c:'意大利 · 木火披萨', p:'€€€', note:'前高缇耶旗舰店改造，空间震撼' },
+    { n:'Grand Véfour', r:4.2, rc:802, c:'米其林二星 · 宫廷', p:'€€€€', note:'Palais Royal 拱廊内 200 年传奇' },
+    { n:'Café Kitsuné', r:4.0, rc:1377, c:'咖啡 / 甜品', p:'€€', note:'Palais Royal 花园，狐狸饼干打卡' },
+  ]},
+  D11:{ area:'玛黑午餐 / 蒙马特晚餐', tips:'避开 Place du Tertre 画家广场正中的店，往 Rue Lepic / Rue des Abbesses 走', list:[
+    { n:'Chantoiseau', r:4.8, rc:534, c:'现代法餐', p:'€€€', note:'Rue Lepic 上，本地人私藏，季节食材', tag:'本地人常去' },
+    { n:'Sacrée Fleur', r:4.8, rc:2419, c:'法式牛排', p:'€€€', note:'蒙马特牛排名店，需订位' },
+    { n:'La Boîte aux Lettres', r:4.8, rc:1779, c:'法式 bistro', p:'€€', note:'Rue Lepic 平价 bistro' },
+    { n:'Le Poulbot', r:4.6, rc:2908, c:'法餐', p:'€€€', note:'蒙马特本地人最爱，远离游客广场', tag:'本地人常去' },
+    { n:'Le Cabanon de la Butte', r:4.6, rc:1158, c:'法餐', p:'€€€', note:'山腰小馆，安静' },
+    { n:'Le Coq & Fils', r:4.5, rc:1196, c:'烤鸡', p:'€€€', note:'巴黎最好烤鸡之一，午市 €19 超值' },
+    { n:'Les Enfants Rouges', r:4.5, rc:539, c:'法餐', p:'€€€', note:'玛黑午餐，牛脸肉入口即化' },
+    { n:'L\'As du Fallafel', r:4.2, rc:5056, c:'Falafel 三明治', p:'€', note:'Rue des Rosiers 人气，外带边走边吃' },
+  ]},
+};
 
 /* ============ 已锁定信息（嵌入每天行程） ============ */
 const LOCKED = {
@@ -1113,6 +1228,45 @@ function qrBlock(items) {
   return `<div class="qr-grid">${items.map(qrCard).join('')}</div>`;
 }
 
+/* ===== 附近餐厅渲染 ===== */
+function fmtRc(n) {
+  if (!n) return '';
+  return n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+}
+function restCard(x) {
+  const cls = x.r >= 4.6 ? 'rb-hi' : (x.r >= 4.3 ? 'rb-mid' : 'rb-low');
+  const rc = x.rc ? `<span class="rb-rc">${fmtRc(x.rc)}评</span>` : '';
+  return `
+    <div class="rest-card">
+      <div class="rest-badge ${cls}">
+        <span class="rb-r">${x.r ? x.r.toFixed(1) : '—'}</span>
+        <span class="rb-star">${x.r ? '★' : '·'}</span>
+        ${rc}
+      </div>
+      <div class="rest-info">
+        <div class="rest-name"><a href="${gmap(x.q || x.n)}" target="_blank" rel="noopener">${x.n}</a>${x.tag ? `<span class="rest-tag${x.tag === '百年老店' ? ' gold' : ''}">${x.tag}</span>` : ''}</div>
+        <div class="rest-meta">${x.c}${x.p ? ` · ${x.p}` : ''}</div>
+        ${x.note ? `<div class="rest-note">${x.note}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+function restBlock(dayId) {
+  const r = RESTAURANTS[dayId];
+  if (!r) return '';
+  const list = [...r.list].sort((a, b) => (b.r || 0) - (a.r || 0));
+  return `
+    <div class="rest-block">
+      <div class="rest-h">
+        <div class="rest-t">🍽️ 附近餐厅 · ${r.area}</div>
+        <div class="rest-sub">按 Google 评分排序</div>
+      </div>
+      ${r.tips ? `<div class="rest-tips">💡 ${r.tips}</div>` : ''}
+      <div class="rest-list">${list.map(restCard).join('')}</div>
+    </div>
+  `;
+}
+
 /* =============================================================
    渲染逻辑
    ============================================================= */
@@ -1219,6 +1373,7 @@ function renderDays() {
           `).join('')}
         </div>
         ${d.dayNote ? `<div class="evt-meta" style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);color:var(--text-muted);font-size:11px;line-height:1.6">💡 ${d.dayNote}</div>` : ''}
+        ${RESTAURANTS[d.id] ? restBlock(d.id) : ''}
       </div>
     </div>
   `}).join('');
