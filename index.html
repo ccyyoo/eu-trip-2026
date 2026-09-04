@@ -341,17 +341,9 @@ footer a{color:var(--text-faint)}
 .qr-err{color:var(--danger);font-size:11px;margin-bottom:8px;display:none}
 .qr-err.show{display:block}
 
-/* ===== PMP 折叠容器 ===== */
-.pmp-fold{margin:14px 0 4px;border:1px dashed var(--france);border-radius:12px;background:var(--france-soft);overflow:hidden}
-.pmp-fold summary{
-  list-style:none;cursor:pointer;padding:12px 14px;font-size:13px;font-weight:700;
-  display:flex;align-items:center;gap:8px;color:var(--france);user-select:none;
-}
-.pmp-fold summary::-webkit-details-marker{display:none}
-.pmp-fold summary .chev{transition:transform .2s;font-size:11px}
-.pmp-fold[open] summary .chev{transform:rotate(90deg)}
-.pmp-fold .pmp-body{padding:2px 12px 14px}
-.pmp-hint{font-size:10px;color:var(--text-muted);line-height:1.5;margin:4px 2px 10px}
+/* ===== 行程内嵌二维码 ===== */
+.evt-qrs{margin:2px 0 4px}
+.evt-qrs .qr-grid{margin-top:6px}
 
 /* Print (optional) */
 @media print{
@@ -857,7 +849,13 @@ const DAYS = [
       {time:'06:40',title:'打车老港 → Nice-Ville',desc:'10min · €12–15',tag:null,cls:'transit'},
       {time:'07:55',title:'TGV Train 6188 → Paris Gare de Lyon',desc:'5h55m · 5车 584 号 (二等)',tag:'已购',cls:'booked'},
       {time:'13:50',title:'到达巴黎',desc:'M14 → M4 回 3 Rue Lecuirot 放箱 · 约 25 分钟',tag:null,cls:'transit'},
-      {time:'15:15',title:'奥赛博物馆激活 PMP (48h 通票)',desc:'预约 16:00 场 · 速刷三宝：梵高自画像/星空/雷诺阿舞会 · 通票含 · 选 "I have PMP" 通道 0€',tag:'PMP',cls:'booked'},
+      {time:'15:15',title:'奥赛博物馆激活 PMP (48h 通票)',desc:'预约 16:00 场 · 速刷三宝：梵高自画像/星空/雷诺阿舞会 · 通票含 · 选 "I have PMP" 通道 0€',tag:'PMP',cls:'booked',
+       qrs:[
+         { img:'pmp_p0', label:'PMP 通票 48h', name:'CHEN YUANYUAN', wide:true },
+         { img:'pmp_p1', label:'PMP 通票 48h', name:'LIU MIN', wide:true },
+         { img:'orsay_p0', label:'奥赛 10/3 16:00', name:'LIU MIN', wide:true },
+         { img:'orsay_p1', label:'奥赛 10/3 16:00', name:'CHEN YUANYUAN', wide:true },
+       ]},
       {time:'17:10',title:'杜乐丽 → 协和 → 香榭散步上山',desc:null,tag:null},
       {time:'18:00',title:'凯旋门登顶 🏛',desc:'暮色+初灯全城 · 通票含 (预约 18:00 场 · 17:00 停入注意)',tag:'PMP',cls:'booked'},
       {time:'19:40',title:'M9 Alma-Marceau → Port de la Conférence',desc:null,tag:null,cls:'transit'},
@@ -874,7 +872,11 @@ const DAYS = [
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Rue+de+la+Huchette,+Paris&travelmode=transit&waypoints=Ch%C3%A2teau+de+Versailles%7CCatacombes+de+Paris%7CNotre-Dame+de+Paris',
     events:[
       {time:'07:30',title:'Alésia M4 → St-Michel 换 RER C',desc:'RER C 方向 VICK/VITY → Versailles Château RG · 约 50min · 步行 7min 到宫门',tag:'RER C',cls:'transit'},
-      {time:'09:00',title:'凡尔赛主宫 🏰',desc:'预约 09:00 场 · 通票 Passport 含小特里亚农 + 花园',tag:'PMP',cls:'booked'},
+      {time:'09:00',title:'凡尔赛主宫 🏰',desc:'预约 09:00 场 · 通票 Passport 含小特里亚农 + 花园',tag:'PMP',cls:'booked',
+       qrs:[
+         { img:'versailles_p0', label:'凡尔赛 10/4 09:00', name:'CHEN YUANYUAN', wide:true },
+         { img:'versailles_p1', label:'凡尔赛 10/4 09:00', name:'LIU MIN', wide:true },
+       ]},
       {time:'12:00',title:'小特里亚农 + 英式花园 🌳',desc:'农家院 + 英式花园 · 比主宫人少',tag:null},
       {time:'13:50',title:'RER C 回 Gare de Lyon → M4 回 Alésia 歇脚',desc:null,tag:null,cls:'transit'},
       {time:'16:00',title:'地下墓穴 Catacombes 💀',desc:'M4 Denfert-Rochereau 1 站 · 预约 16:00 场 · 19:30 停入 · €31 · 提前 7 天购',tag:'待购',cls:'booked'},
@@ -891,9 +893,17 @@ const DAYS = [
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Mus%C3%A9e+du+Louvre&travelmode=transit&waypoints=Palais+Garnier%7CMus%C3%A9e+de+l%27Orangerie%7CH%C3%B4tel+de+la+Marine',
     events:[
       {time:'09:30',title:'加尼叶歌剧院 Palais Garnier 🎭',desc:'周一开放 10:00–17:00 · 大楼梯 + 夏加尔天花板 · €14 单买(不在通票)',tag:'待购',cls:'booked'},
-      {time:'12:00',title:'橘园 (Orangerie) 🌸',desc:'协和广场侧 · 莫奈睡莲 1h30m · 通票含 · 预约 12:00',tag:'PMP',cls:'booked'},
+      {time:'12:00',title:'橘园 (Orangerie) 🌸',desc:'协和广场侧 · 莫奈睡莲 1h30m · 通票含 · 预约 12:00',tag:'PMP',cls:'booked',
+       qrs:[
+         { img:'orangerie_p0', label:'橘园 10/5 12:00', name:'CHEN YUANYUAN', wide:true },
+         { img:'orangerie_p1', label:'橘园 10/5 12:00', name:'LIU MIN', wide:true },
+       ]},
       {time:'13:00',title:'海军府 Hôtel de la Marine ⚓ (弹性)',desc:'看情况去 · 协和广场旁 · 鎏金沙龙 + 露台看铁塔 · 通票含',tag:'PMP',cls:'booked'},
-      {time:'14:00',title:'卢浮宫 Louvre 🖼',desc:'预约 14:00 场 · 16:00 通票失效前冲三宝 · 17:00 停入',tag:'PMP',cls:'booked'},
+      {time:'14:00',title:'卢浮宫 Louvre 🖼',desc:'预约 14:00 场 · 16:00 通票失效前冲三宝 · 17:00 停入',tag:'PMP',cls:'booked',
+       qrs:[
+         { img:'louvre_p0', label:'卢浮宫 10/5 14:00', name:'CHEN YUANYUAN' },
+         { img:'louvre_p1', label:'卢浮宫 10/5 14:00', name:'LIU MIN' },
+       ]},
       {time:'16:10',title:'M4 回 Alésia 歇脚 → 18:00 14区轻晚餐',desc:'通票 16:00 自动失效 (10.3 16:00 激活起 48h)',tag:null,cls:'transit'},
     ],
     dayNote:'⚠️ 先贤祠已挪至 10.6 · 歌剧院周一 10:00–17:00 开放，遇演出可能关闭，提前官网确认 · 橘园预约 12:00 场',
@@ -1075,20 +1085,6 @@ const QR_SLOTS = {
   ],
 };
 
-// 巴黎已预约博物馆门票 → 统一放 PMP 通票折叠（D8 通票激活处）
-const PMP_FOLD = [
-  { img:'pmp_p0', label:'PMP 通票 48h', name:'CHEN YUANYUAN', wide:true },
-  { img:'pmp_p1', label:'PMP 通票 48h', name:'LIU MIN', wide:true },
-  { img:'orsay_p0', label:'奥赛 10/3 16:00', name:'LIU MIN', wide:true },
-  { img:'orsay_p1', label:'奥赛 10/3 16:00', name:'CHEN YUANYUAN', wide:true },
-  { img:'versailles_p0', label:'凡尔赛 10/4 09:00', name:'CHEN YUANYUAN', wide:true },
-  { img:'versailles_p1', label:'凡尔赛 10/4 09:00', name:'LIU MIN', wide:true },
-  { img:'louvre_p0', label:'卢浮宫 10/5 14:00', name:'CHEN YUANYUAN' },
-  { img:'louvre_p1', label:'卢浮宫 10/5 14:00', name:'LIU MIN' },
-  { img:'orangerie_p0', label:'橘园 10/5 12:00', name:'CHEN YUANYUAN', wide:true },
-  { img:'orangerie_p1', label:'橘园 10/5 12:00', name:'LIU MIN', wide:true },
-];
-
 let qrUnlocked = false;
 
 function qrCard(q) {
@@ -1115,18 +1111,6 @@ function qrCard(q) {
 function qrBlock(items) {
   if (!items || !items.length) return '';
   return `<div class="qr-grid">${items.map(qrCard).join('')}</div>`;
-}
-
-function pmpFoldHTML() {
-  return `
-    <details class="pmp-fold">
-      <summary>🎫 Paris Museum Pass 通票 + 巴黎博物馆门票（已预约）<span class="chev">▶</span></summary>
-      <div class="pmp-body">
-        <div class="pmp-hint">🔒 二维码默认遮罩，输入口令解锁 · 通票 10/3 16:00 激活、10/5 16:00 失效 · 巴黎各馆入场请与通票一同出示</div>
-        ${qrBlock(PMP_FOLD)}
-      </div>
-    </details>
-  `;
 }
 
 /* =============================================================
@@ -1224,13 +1208,13 @@ function renderDays() {
         </div>
         ${LOCKED[d.id] ? `<div class="locked"><div class="locked-title">🔒 已锁定</div>${LOCKED[d.id].map(l => `<div class="locked-row"><span class="locked-cat">${l.cat}</span><span class="locked-val">${l.val}</span></div>`).join('')}</div>` : ''}
         ${QR_SLOTS[d.id] ? qrBlock(QR_SLOTS[d.id]) : ''}
-        ${d.id === 'D8' ? pmpFoldHTML() : ''}
         <div class="timeline">
           ${d.events.map(e => `
             <div class="evt ${e.cls || ''}">
               <div class="evt-time">${e.time}${e.tag ? `<span class="evt-tag ${e.cls || ''}">${e.tag}</span>` : ''}</div>
               <div class="evt-title">${e.title}</div>
               ${e.desc ? `<div class="evt-desc">${e.desc}</div>` : ''}
+              ${e.qrs ? `<div class="evt-qrs">${qrBlock(e.qrs)}</div>` : ''}
             </div>
           `).join('')}
         </div>
