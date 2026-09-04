@@ -221,6 +221,8 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .rest-note{font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.5}
 .rest-tag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:3px;background:var(--nice-bg);color:var(--nice);font-weight:700;margin-left:6px;vertical-align:1px;letter-spacing:.3px}
 .rest-tag.gold{background:var(--warn-bg);color:var(--warn)}
+.rest-map{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;margin-left:6px;border-radius:4px;background:var(--france-bg);color:var(--france);text-decoration:none;letter-spacing:.3px;vertical-align:1px}
+.rest-map:hover{filter:brightness(.92)}
 
 /* ===== Todo ===== */
 .todo-card{background:var(--surface);border-radius:var(--radius);padding:6px 16px;box-shadow:var(--shadow)}
@@ -799,14 +801,14 @@ const DAYS = [
     events:[
       {time:'上午',title:'弹性休整',desc:'可睡到自然醒 / Las Arenas 屋顶或西班牙广场周边轻逛 · 午餐后上山',tag:null},
       {time:'14:00',title:'公交 150 直达城堡',desc:'西班牙广场乘 150 路 · 约 25 分钟 · 每 20 分钟一班 · 末班 21:23',tag:'公交',cls:'transit'},
-      {time:'14:30',title:'蒙特惠奇城堡',desc:'€12 或外围免费平台 · 360° 港口全景 · 内战记忆',tag:'待购',cls:'booked'},
+      {time:'14:30',title:'蒙特惠奇城堡',desc:'外围免费平台看 360° 全景即可 · 内部 €12 可选 (内战史/炮台/监狱展)',tag:'免费平台即可',cls:'booked'},
       {time:'16:00',title:'山地花园漫步',desc:'Joan Brossa / Mirador de l\'Alcalde / Laribal 择一',tag:null},
-      {time:'17:00',title:'MNAC 精华参观',desc:'€12 · 世界最全罗曼壁画 + 加泰现代主义 · 周二开到 20:00',tag:'待购',cls:'booked'},
+      {time:'17:00',title:'MNAC 精华参观',desc:'€12 · 世界最全罗曼壁画+加泰现代主义 · 喜欢艺术才进馆，否则台阶免费全景+日落就够',tag:'看兴趣',cls:'booked'},
       {time:'18:30',title:'1929 世博会轴线',desc:'密斯馆外观 / MNAC 台阶 / 城市全景 · 免费',tag:null},
       {time:'19:35',title:'蒙特惠奇日落',desc:'9 月底约 19:35 日落 · MNAC 台阶 / Mirador 等候 · 20:00 下山',tag:null},
       {time:'20:15',title:'Poble-sec 晚餐',desc:'Carrer de Blai 吃 Pintxos · 餐后步行回酒店 (10–15 分钟)',tag:null},
     ],
-    dayNote:'蒙特惠奇 = 一次单向下山线 · 9/29 周二为付费日 (城堡/MNAC 各 €12) · 空中缆车已砍，公交 150 替代',
+    dayNote:'蒙特惠奇 = 一次单向下山线 · 城堡外围免费平台看全景即可 (内部 €12 可选) · MNAC 视兴趣 €12 · 台阶全景+日落免费 · 公交 150 替代空中缆车',
   },
   {
     id:'D5', date:'2026-09-30', dateLabel:'9月30日 周三', city:'巴塞罗那→尼斯', country:'spain',
@@ -1073,7 +1075,7 @@ const LOCKED = {
     {cat:'🏨 住宿', val:'Pestana Arena · 标准客房'},
   ],
   'D4': [
-    {cat:'🎫 门票', val:'蒙特惠奇城堡 €12(待购) · MNAC 17:00 €12(待购)'},
+    {cat:'🎫 门票', val:'蒙特惠奇城堡 €12(可选) · MNAC 17:00 €12(可选) · 均非必买'},
     {cat:'🏨 住宿', val:'Pestana Arena · 标准客房'},
   ],
   'D5': [
@@ -1114,9 +1116,9 @@ const LOCKED = {
 const TODOS = [
   {section:'🛒 行前必购 (待办)'},
   {d:false, t:'巴特罗之家 9/28 13:00', s:'casabatllo.es · 银票含屋顶 · €29–50 · 本周购'},
-  {d:false, t:'蒙特惠奇城堡 9/29', s:'官方渠道 ajuntament.barcelona.cat · €12 · 出发前 3–5 天'},
-  {d:false, t:'MNAC 9/29 17:00', s:'museunacional.cat · €12 · 出发前 3–5 天'},
-  {d:false, t:'Catacombes 地下墓穴 10/4 16:00', s:'catacombes.paris.fr · €31 · <b>提前 7 天</b>'},
+  {d:false, t:'蒙特惠奇城堡 9/29 (可选)', s:'外围免费平台看全景即可 · 内部 €12 可选 · ajuntament.barcelona.cat'},
+  {d:false, t:'MNAC 9/29 17:00 (可选)', s:'喜欢罗曼壁画才进馆 · museunacional.cat · €12 · 台阶全景免费'},
+  {d:false, t:'地下墓穴门票 · 9/27 开抢', s:'10/4 16:00 场 · catacombes.paris.fr · €31 · <b>提前 7 天 = 9/27 准时开售，记得抢</b>'},
   {d:false, t:'塞纳河游船 Bateaux Mouches 10/3 20:30', s:'bateaux-mouches.fr · €20'},
   {d:false, t:'SUP 桨板 10/1 15:00', s:'Airbnb Experiences / Urban Door · €40–60/人 · 提前 1 周'},
   {d:false, t:'Château de Crémat 品酒 10/2 15:00', s:'chateaudecremat.com · €20–30/人 · 必官网提前订 (Plan B 备)'},
@@ -1244,7 +1246,7 @@ function restCard(x) {
         ${rc}
       </div>
       <div class="rest-info">
-        <div class="rest-name"><a href="${gmap(x.q || x.n)}" target="_blank" rel="noopener">${x.n}</a>${x.tag ? `<span class="rest-tag${x.tag === '百年老店' ? ' gold' : ''}">${x.tag}</span>` : ''}</div>
+        <div class="rest-name"><a href="${gmap(x.q || x.n)}" target="_blank" rel="noopener">${x.n}</a>${x.tag ? `<span class="rest-tag${x.tag === '百年老店' ? ' gold' : ''}">${x.tag}</span>` : ''}<a class="rest-map" href="${gmap(x.q || x.n)}" target="_blank" rel="noopener">🗺 地图</a></div>
         <div class="rest-meta">${x.c}${x.p ? ` · ${x.p}` : ''}</div>
         ${x.note ? `<div class="rest-note">${x.note}</div>` : ''}
       </div>
