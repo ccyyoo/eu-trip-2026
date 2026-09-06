@@ -213,6 +213,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .rb-hi{background:var(--success-bg);color:var(--success)}
 .rb-mid{background:var(--france-bg);color:var(--france)}
 .rb-low{background:var(--surface);color:var(--text-muted)}
+.rb-local{background:var(--spain-bg);color:var(--spain)}
 .rest-info{flex:1;min-width:0}
 .rest-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.35}
 .rest-name a{color:inherit;text-decoration:none}
@@ -978,88 +979,86 @@ const DAYS = [
   },
 ];
 
-/* ============ 附近餐厅（按 Google 评分降序，避开游客陷阱） ============ */
+/* ============ 附近餐厅（本地人取向 · 已剔除网红店与游客店） ============ */
 const RESTAURANTS = {
-  D1:{ area:'西班牙广场 / 英迪格酒店', tips:'首晚别跨区：酒店步行 10 分钟内解决；西班牙广场两侧游客店多，往 Hostafrancs 方向走 2 条街价格降两成', list:[
-    { n:'La Terraza Miró', r:4.6, rc:3489, c:'加泰菜 · 屋顶露台', p:'€', note:'本地人聚餐点，屋顶能望魔幻喷泉方向，首晚轻松之选', tag:'本地人常去' },
-    { n:'Taps Barcelona', r:4.7, rc:1541, c:'地中海 tapas', p:'€€', note:'章鱼/炸丸子/芝士杏仁，评价很稳' },
-    { n:'Filigrana', r:4.4, rc:600, c:'地中海 · 现代', p:'€€€', note:'西班牙广场旁，环境好适合落脚后第一顿' },
-    { n:'Can Lampazas', r:4.3, rc:4010, c:'加利西亚章鱼', p:'€€', note:'Pulpo 是招牌，本地家庭聚餐地' },
+  D1:{ area:'Hostafrancs / Poble-sec / Sants', tips:'⛔ 西班牙广场一圈是"多国语言菜单 + 露天座位"重灾区，价格贵三成。往南走 10–15 分钟进 Hostafrancs / Poble-sec 就是本地人价格 · 认准 <b>menú del día</b>（午市套餐 €12–18，13:00–16:00 才有）· 巴塞晚餐 <b>21:00</b> 才开始，20:00 到的店基本只有游客', list:[
+    { n:'La Pubilla', r:null, rc:null, c:'加泰家常 · 家庭食堂', p:'€', note:'Carrer de Sants 312 · L1 三站 Plaça de Sants · 招牌是"奶奶的 canelons"+白豆炖香肠 · menú del día €12.5 · 周末本地家庭聚餐地', q:'La Pubilla Carrer de Sants 312 Barcelona', tag:'本地人食堂' },
+    { n:'Taverna Can Margarit', r:null, rc:null, c:'加泰菜 · 1950 年老酒馆', p:'€', note:'Carrer de la Concòrdia 21（Poble-sec）· 从西班牙广场步行 15 分钟 / L3 一站 · menú €14 · <b>只收现金</b>', q:'Taverna Can Margarit Carrer de la Concordia 21 Barcelona', tag:'本地人食堂' },
+    { n:'Xemei', r:null, rc:null, c:'威尼斯菜 · 家庭小馆', p:'€€', note:'Passeig de l\'Exposició 85（Poble-sec）· 龙虾浓汤饭 arroz meloso €22–28 · 不到 20 桌 · 周日休 · 建议订', q:'Xemei Passeig de l Exposicio 85 Barcelona', tag:'本地人私藏' },
+    { n:'Bodega Gol', r:null, rc:null, c:'加泰菜 · 自酿 vermut', p:'€€', note:'Sant Antoni 区 · 烤乳猪千层面 rostit + 自家酿味美思 · 餐前一杯 vermut 是本地人的固定仪式', q:'Bodega Gol Barcelona Sant Antoni' },
   ]},
-  D2:{ area:'哥特区 / Born', tips:'避开兰布拉主街“6 国语言菜单”的店；人塔结束往 Born 巷子里走', list:[
-    { n:'Cal Pep', r:4.6, rc:null, c:'海鲜 tapas · 无菜单', p:'€€€', note:'本地人排队神店，看当日食材点单，海鲜是灵魂', tag:'本地人常去' },
-    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧 + 罐头小吃', p:'€', note:'百年 cava 吧，anchovies 配自家起泡酒', tag:'百年老店' },
-    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'年轻人聚集，蘑菇牛肝菌 tapas 出名' },
-    { n:'Montiel', r:4.4, rc:null, c:'加泰菜', p:'€€€', note:'Born 巷内安静小店，品质稳定' },
-    { n:'7 Portes', r:4.3, rc:null, c:'1836 年海鲜饭', p:'€€€', note:'全城最老餐厅之一，海鲜饭按锅出', tag:'百年老店' },
+  D2:{ area:'哥特区 / Born 巷内', tips:'⛔ 兰布拉主街、大教堂正对面、<b>7 Portes / Los Caracoles 这类"百年老店"现在基本是游客团餐</b>，本版已剔除 · 9/27 是 La Mercè 闭幕日，主街封路人多，往 Born 巷内走 · 判断法：菜单只有加泰语/西语 + 当日黑板 = 本地店；五国语言 + 图片菜单 = 游客店', list:[
+    { n:'Cafe de l\'Academia', r:null, rc:null, c:'加泰菜 · 市政厅旁小馆', p:'€€', note:'Carrer dels Lledó 1 · 烤蔬菜拼盘 parrillada + 铁板鲈鱼 · menú €15 · 座位少<b>必须订</b> · 中午是市政厅公务员的食堂', q:'Cafe de l Academia Carrer dels Lledo 1 Barcelona', tag:'本地人食堂' },
+    { n:'Restaurant Agut', r:null, rc:null, c:'加泰菜 · 1924', p:'€€', note:'Carrer de Gignàs 16 · 手工 canelones + 蒜香橄榄油鳕鱼 bacalao al pil pil · menú del día €16 · 周日晚上 + 周一休', q:'Restaurant Agut Carrer de Gignas 16 Barcelona', tag:'百年老店' },
+    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧', p:'€', note:'Carrer de Montcada 22 · 站着吃的地方 · 醋渍凤尾鱼 anchovies + 自家起泡酒 · 只收现金 · 19:00 后本地人开始挤进来', q:'El Xampanyet Carrer de Montcada 22 Barcelona', tag:'百年老店' },
+    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'Carrer de Montcada 2 · 牛肝菌蘑菇 tapas · 本地年轻人和酒圈的人', q:'Bar del Pla Carrer de Montcada 2 Barcelona' },
+    { n:'Montiel', r:4.4, rc:null, c:'加泰菜 · 现代', p:'€€€', note:'Carrer de la Ribera 20（Born 巷内）· 安静小店，主街走 2 分钟 · 品质稳定', q:'Montiel Carrer de la Ribera 20 Barcelona' },
   ]},
-  D3:{ area:'Gràcia 午餐 / 圣家堂-Eixample', tips:'圣家堂正门 50 米内全是游客店；Gràcia 是本地人食堂，桂尔下山顺路吃', list:[
-    { n:'Paisano Bistró', r:4.8, rc:2369, c:'意 / 地中海', p:'€€', note:'圣家堂附近评分最高，健康风 + 素食可选' },
-    { n:'The Sopa Boba', r:4.7, rc:1343, c:'地中海 tapas', p:'€€', note:'Eixample 本地 tapas 代表' },
-    { n:'Con Gracia', r:4.7, rc:768, c:'加泰菜 · 现代', p:'€€€', note:'Gràcia 高分加泰菜，适合下山午餐' },
-    { n:'Viblioteca', r:4.6, rc:1209, c:'自然酒 + tapas', p:'€€', note:'Gràcia 酒馆，边吃边挑酒' },
-    { n:'Gasterea', r:4.6, rc:1086, c:'巴斯克 tapas', p:'€€', note:'Gràcia 老字号，热 pintxos 口头报菜' },
-    { n:'La Pepita', r:4.5, rc:5571, c:'创意 tapas', p:'€€', note:'牛肉塔塔/章鱼/迷你汉堡，人气超旺' },
-    { n:'El Tastet de l\'Artur', r:4.6, rc:645, c:'加泰烤肉', p:'€€', note:'圣家堂旁加泰烤肉，肉食友好' },
+  D3:{ area:'Gràcia（桂尔下山顺路）', tips:'⛔ 圣家堂正门 50 米内 + Passeig de Gràcia 主街上的 brunch 店（Paisano / La Pepita 之类）已全部剔除：环境漂亮但本地人不吃 · Gràcia 是巴塞罗那真正的"本地人食堂区"，老店多、游客少 · 周一很多店休，出发前看一眼当日营业', list:[
+    { n:'Can Vilaró', r:null, rc:null, c:'加泰家常 · 1950 起', p:'€€', note:'Carrer Gran de Gràcia 174 / Torrent de l\'Olla · 墨鱼饭 arròs negre + 加泰奶油布丁 crema catalana · 家庭经营两代 · 桂尔下山顺路', q:'Can Vilaro Gracia Barcelona', tag:'本地人食堂' },
+    { n:'Taverna El Glop', r:null, rc:null, c:'柴火 paella / fideuà', p:'€€', note:'Gràcia 区 · 用柴火灶做海鲜饭和细面饭 · 本地人周末家庭聚餐，游客极少', q:'Taverna El Glop Gracia Barcelona', tag:'本地人食堂' },
+    { n:'Con Gracia', r:4.7, rc:768, c:'加泰菜 · 现代', p:'€€€', note:'Gràcia 高分加泰菜 · 老房子改造 · 适合上午桂尔下来这顿正餐', q:'Con Gracia Barcelona' },
+    { n:'Gasterea', r:4.6, rc:1086, c:'巴斯克 pintxos · 老字号', p:'€€', note:'Gràcia 老字号 · 冷柜里的别拿，直接点黑板上的热 pintxos（口头报菜）', q:'Gasterea Gracia Barcelona' },
+    { n:'Cal Boter', r:null, rc:null, c:'加泰家常 · 平民', p:'€', note:'Gràcia · 蜗牛 cargols + 白豆炖香肠 + 鳕鱼 · 最本地最不修饰的一档，价格极低', q:'Cal Boter Gracia Barcelona', tag:'本地人食堂' },
+    { n:'El Tastet de l\'Artur', r:4.6, rc:645, c:'加泰烤肉', p:'€€', note:'圣家堂旁 · 赶场没时间去 Gràcia 时的备选（游客略多但菜是真的）', q:'El Tastet de l Artur Barcelona' },
   ]},
-  D4:{ area:'蒙特惠奇 / Poble-sec', tips:'Carrer de Blai 是 Pintxos 一条街，周日人多；认准牙签计价', list:[
-    { n:'La Tasqueta de Blai', r:4.5, rc:10000, c:'Pintxos 自助', p:'€', note:'Blai 街最火，50+ 种 €1.9 起，牙签按色计价', tag:'本地人最火' },
-    { n:'Koska Taberna', r:4.5, rc:null, c:'巴斯克 pintxos', p:'€€', note:'跳过冷柜，直接点黑板热菜 + Txakoli' },
-    { n:'Blai 9', r:4.5, rc:null, c:'blinis 底 pintxos', p:'€', note:'用 blini/可丽饼做底，视觉系' },
-    { n:'Quimet & Quimet', r:null, rc:null, c:'1914 年罐头海鲜', p:'€€', note:'烟熏三文鱼配松露蜂蜜 montadito 是招牌', tag:'百年老店' },
-    { n:'Can Lampazas', r:4.3, rc:4010, c:'加利西亚章鱼', p:'€€', note:'Poble-sec 老店，Pulpo 必点' },
+  D4:{ area:'Barceloneta（午餐） / Poble-sec（MNAC 后晚餐）', tips:'⛔ Blai 街的 pintxos 一条街（La Tasqueta de Blai / Blai 9）+ Quimet & Quimet 已剔除：现在 90% 是游客 · 上午在海滩，午餐直接吃 Barceloneta 的老店；MNAC 出来步行 10 分钟进 Poble-sec 吃晚餐', list:[
+    { n:'La Cova Fumada', r:null, rc:null, c:'Barceloneta 老酒馆 · bombas 发源地', p:'€', note:'Carrer del Baluard 56 · 炸土豆球 bombas 就是这儿发明的 · <b>只收现金、不接受预订、只做午市</b> · 上午海滩玩完 13:00 直接去，完美匹配今天行程', q:'La Cova Fumada Carrer del Baluard 56 Barcelona', tag:'本地人食堂' },
+    { n:'Casa Maians', r:null, rc:null, c:'Barceloneta · 海鲜饭', p:'€€', note:'Carrer del Baluard 62 · 黑米饭 arròs negre + 红虾 · 家族经营，比海滩第一排便宜一半', q:'Casa Maians Carrer del Baluard 62 Barcelona' },
+    { n:'Xemei', r:null, rc:null, c:'威尼斯菜 · 小馆', p:'€€', note:'Passeig de l\'Exposició 85（Poble-sec）· 从 MNAC 下山顺路 · 龙虾浓汤饭 · <b>周日休，今天周二正常</b> · 建议订', q:'Xemei Passeig de l Exposicio 85 Barcelona', tag:'本地人私藏' },
+    { n:'Can Kenji', r:null, rc:null, c:'日加融合 · 10 座', p:'€€', note:'Carrer de Blai 38（Poble-sec）· 只有 10 个座位，主厨一人做 · 避开整条街的游客 pintxos，本地饕客才推门', q:'Can Kenji Carrer de Blai 38 Barcelona', tag:'本地人私藏' },
+    { n:'Taverna Can Margarit', r:null, rc:null, c:'加泰菜 · 老酒馆', p:'€', note:'Carrer de la Concòrdia 21 · menú €14 · <b>只收现金</b> · 从 MNAC 下山走 8 分钟', q:'Taverna Can Margarit Carrer de la Concordia 21 Barcelona', tag:'本地人食堂' },
   ]},
-  D5:{ area:'哥特区 / 大教堂 / 兰布拉', tips:'波盖利亚市场只顺路看、别在里面吃（游客价）；老城往里走 1 条街', list:[
-    { n:'Cal Pep', r:4.6, rc:null, c:'海鲜 tapas · 无菜单', p:'€€€', note:'同 D2，海鲜 tapas 天花板', tag:'本地人常去' },
-    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧', p:'€', note:'大教堂附近，anchovies + 起泡酒', tag:'百年老店' },
-    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'离大教堂不远，午餐好选' },
-    { n:'7 Portes', r:4.3, rc:null, c:'1836 年海鲜饭', p:'€€€', note:'海港边，海鲜饭按锅', tag:'百年老店' },
+  D5:{ area:'哥特区 / 加泰广场（离巴塞最后一餐）', tips:'⛔ 波盖利亚市场里面只适合买水果，坐下吃是游客价；加泰广场 / Portal de l\'Àngel 连锁店扎堆 · 今天是周三，走 5 分钟进哥特老城吃最后一顿加泰菜，16:20 要出发去机场', list:[
+    { n:'Cafe de l\'Academia', r:null, rc:null, c:'加泰菜 · 市政厅旁小馆', p:'€€', note:'大教堂步行 3 分钟 · menú €15 · 烤蔬菜 + 铁板鲈鱼 · <b>中午务必订位</b>，公务午餐时段满座', q:'Cafe de l Academia Carrer dels Lledo 1 Barcelona', tag:'本地人食堂' },
+    { n:'Restaurant Agut', r:null, rc:null, c:'加泰菜 · 1924', p:'€€', note:'Carrer de Gignàs 16 · canelones + bacalao al pil pil · menú €16 · 周日晚上 + 周一休（今天周三没问题）', q:'Restaurant Agut Carrer de Gignas 16 Barcelona', tag:'百年老店' },
+    { n:'El Xampanyet', r:4.5, rc:null, c:'1929 年 cava 吧', p:'€', note:'凤尾鱼 + 起泡酒，站着吃半小时就走 · 适合赶飞机前的轻食', q:'El Xampanyet Carrer de Montcada 22 Barcelona', tag:'百年老店' },
+    { n:'Bar del Pla', r:4.5, rc:null, c:'自然酒 + tapas', p:'€€', note:'Carrer de Montcada 2 · 离大教堂 5 分钟 · 牛肝菌 tapas', q:'Bar del Pla Carrer de Montcada 2 Barcelona' },
   ]},
-  D6:{ area:'尼斯老城 / 港口', tips:'老城靠海边的店偏游客，往里走（Rue Droite / Rue Raoul Bosio 一带）本地店多', list:[
-    { n:'Chez Acchiardo', r:4.7, rc:3248, c:'家庭南法菜', p:'€€', note:'1927 年起四代传承，daube/烤鱼，提前订', tag:'本地人常去' },
-    { n:'Olive et Artichaut', r:4.6, rc:1080, c:'现代南法 · Bib Gourmand', p:'€€€', note:'米其林必比登，市场食材' },
-    { n:'Chez Pipo', r:4.5, rc:5864, c:'Socca 鹰嘴豆煎饼', p:'€', note:'1923 年起木炭炉 socca，南法灵魂小吃', tag:'百年老店' },
-    { n:'Peixes', r:4.5, rc:2733, c:'海鲜 ceviche', p:'€€', note:'现代海鲜吧，生鱼塔塔 + 自然酒' },
-    { n:'Le Bistrot d\'Antoine', r:4.5, rc:1486, c:'法式 bistro', p:'€€', note:'本地人反复回头的家常 bistro' },
-    { n:'La Merenda', r:4.3, rc:950, c:'无菜单南法菜', p:'€€', note:'无电话无刷卡，黑板手写菜单，现金', tag:'本地人常去' },
+  D6:{ area:'尼斯老城 Vieux Nice / 港口', tips:'🔑 尼斯最硬的本地店判别标准：门口贴 <b>Cuisine Nissarde</b> 认证标（市政府审的传统尼斯菜）· 其次看菜单：只有法语 + 当日手写黑板 = 本地；英日中俄四语 + 供应 pizza / 牛排 = 游客 · ⛔ 已剔除：英国人漫步大道一线、Masséna 广场周边、Olive et Artichaut 这类"必比登打卡"· 老城主厨周六日常休，<b>周日不少真老店关门，建议提前确认</b>', list:[
+    { n:'Chez Acchiardo', r:4.7, rc:3248, c:'尼斯家常 · 1927 四代', p:'€€', note:'38 Rue Droite · 红酒炖牛肉 daube / 尼斯炖鱼 / 塞馅沙丁鱼 · plat du jour €15–18 · 只有 20 个座位，<b>晚餐必须订</b>', q:'Chez Acchiardo 38 Rue Droite Nice', tag:'本地人食堂' },
+    { n:'La Merenda', r:4.3, rc:950, c:'无菜单尼斯菜', p:'€€', note:'4 Rue Raoul Bosio · 主厨从米其林餐厅出来开的 · 菜品 €18–22 · <b>无电话、不能刷卡、必须本人到场订</b> · 想吃就早点去敲门', q:'La Merenda 4 Rue Raoul Bosio Nice', tag:'本地人私藏' },
+    { n:'Le Bistrot d\'Antoine', r:4.5, rc:1486, c:'法式 bistro', p:'€€', note:'27 Rue de la Préfecture · 主菜 €16–24 · 食材来自尼斯周边小农 · 夏季点普罗旺斯炖菜 ratatouille', q:'Le Bistrot d Antoine 27 Rue de la Prefecture Nice', tag:'本地人常去' },
+    { n:'Lou Pilha Leva', r:null, rc:null, c:'尼斯街头菜 · 老城', p:'€', note:'10 Rue du Collet · 主打塞馅蔬菜 petits farcis €8–12（番茄/西葫芦/青椒塞面包屑香草）· 分量大到一份够两人 · 站着吃的本地食堂', q:'Lou Pilha Leva 10 Rue du Collet Nice', tag:'本地人食堂' },
+    { n:'Chez Palmyre', r:null, rc:null, c:'港口工人食堂', p:'€', note:'5 Rue Droite（港口侧）· daube €17 / 烤鱼 €19 · <b>只做午市</b>，12:30 前就满 · 客人是码头工人和船主', q:'Chez Palmyre 5 Rue Droite Nice', tag:'本地人食堂' },
+    { n:'Chez René Socca', r:null, rc:null, c:'Socca 鹰嘴豆煎饼', p:'€', note:'2 Rue Miralheti · socca €3、pissaladière（洋葱凤尾鱼塔）€4 · 比 Chez Pipo 游客少一半，本地人自己排这边 · 要配一杯 rosé', q:'Chez Rene Socca 2 Rue Miralheti Nice', tag:'本地人更爱' },
   ]},
-  D7:{ area:'昂蒂布老城 / 港口（晚回尼斯老港）', tips:'昂蒂布港口正对游客的店一般，往里走老城；晚餐回尼斯老港吃', list:[
-    { n:'L\'Ostral', r:4.5, rc:364, c:'地中海海鲜', p:'€€€', note:'昂蒂布口碑海鲜，服务细腻' },
-    { n:'Chez Mô (Albert 1er)', r:null, rc:null, c:'海鲜 + 鱼铺', p:'€€', note:'港口本地人聚集，海鲜拼盘 + 现烤鱼' },
-    { n:'Le Vauban', r:null, rc:null, c:'经典法餐', p:'€€€', note:'老城经典法餐，建议预订' },
-    { n:'Cafe de Turin', r:4.1, rc:5250, c:'1908 年生蚝', p:'€€', note:'尼斯老港生蚝名店，蚝 + 本地酒收尾', tag:'百年老店' },
-    { n:'Chez Pipo', r:4.5, rc:5864, c:'Socca', p:'€', note:'若想吃 socca，回尼斯老港这家最近' },
+  D7:{ area:'昂蒂布老城 Vieil Antibes（港口一线已剔除）', tips:'🔑 昂蒂布判断法：<b>Off the obvious squares</b> —— 离开 Place Nationale、离开港口码头那一排，钻进 rue de la Tourraque / Safranier 片区 · 菜单短 + 法语优先 + 房间小 = 本地 · ⛔ 港口正对游艇的那一排（Le Vauban 一带）价格翻倍 · 昂蒂布本地小馆 Google 评论样本少，别被"评论数少"劝退', list:[
+    { n:'Le Comptoir de la Tourraque', r:null, rc:null, c:'普罗旺斯 bistro', p:'€€', note:'1 Rue de la Tourraque · 本地公寓业主自己写的"我们这条街、我们的食堂" · 菜单短、跟着市场走 · 建议订', q:'Le Comptoir de la Tourraque 1 rue de la Tourraque Antibes', tag:'本地人食堂' },
+    { n:'La Taille de Guêpe', r:null, rc:null, c:'现代法餐 · 小馆', p:'€€', note:'24 Rue de Fersen · 老城巷内 · 摆盘用鲜花，本地人宴客常去 · <b>不订基本没位</b>', q:'La Taille de Guepe 24 rue de Fersen Antibes', tag:'本地人私藏' },
+    { n:'Mamo Michelangelo', r:null, rc:null, c:'意餐 · 昂蒂布传奇', p:'€€', note:'4 Rue des Cordiers · 昂蒂布公认的意大利菜老铺 · 家庭经营 · 老城窄巷里，游客很难自己找到', q:'Mamo Michelangelo 4 rue des Cordiers Antibes', tag:'本地人常去' },
+    { n:'Le Bistrot du Coin', r:null, rc:null, c:'科西嘉菜', p:'€', note:'7 Rue de la Pompe · 当日特餐约 €16 · 科西嘉风味，肉和奶酪都从岛上直送', q:'Le Bistrot du Coin 7 rue de la Pompe Antibes', tag:'本地人食堂' },
+    { n:'La Petite Escale', r:null, rc:null, c:'法式小馆', p:'€€', note:'30 Rue Fourmillière · 老城本地回头的家常小馆', q:'La Petite Escale 30 rue Fourmilliere Antibes' },
+    { n:'Chez Mô', r:null, rc:null, c:'海鲜 + 鱼铺', p:'€€', note:'港口 Cour Masséna 一侧 · 前店卖鱼后店做菜 · 本地人吃海鲜拼盘和现烤鱼的地方 · 晚市 €38 起性价比高', q:'Chez Mo Antibes port' },
   ]},
-  D8:{ area:'奥赛 / 圣日耳曼', tips:'奥赛周边偏游客，圣日耳曼（Rue du Bac 一带）本地店多', list:[
-    { n:'Les Parisiens', r:4.7, rc:1539, c:'法式 bistro', p:'€€€', note:'圣日耳曼高分 bistro，本地人常去' },
-    { n:'Bouillon République', r:4.7, rc:36899, c:'平价法餐', p:'€', note:'传奇 bouillon，排队但超值；区位在 2 区需地铁', tag:'性价比之王' },
-    { n:'Les Antiquaires', r:4.6, rc:10793, c:'法式 bistro', p:'€€€', note:'万评老牌 bistro，油封鸭/牛排出名', tag:'本地人常去' },
-    { n:'Cocorico', r:4.4, rc:2961, c:'法餐', p:'€€', note:'奥赛附近，行程后顺路' },
-    { n:'Café d\'Orsay', r:4.4, rc:2181, c:'博物馆旁简餐', p:'€€', note:'奥赛门口，赶场速食' },
+  D8:{ area:'圣日耳曼 / Odéon 后街（奥赛门口已剔除）', tips:'⛔ Café d\'Orsay、Les Deux Magots、Café de Flore 一带是"为风景买单"的游客价 · 今天的本地吃法：<b>离开塞纳河那条大马路，往 Rue de Seine / Rue de l\'Odéon / Rue Monsieur le Prince 走 3 条街</b> · 巴黎晚餐 19:30 才坐满，19:00 到的店里只有外国人 · 周六晚上本地街区也要订', list:[
+    { n:'Les Antiquaires', r:4.6, rc:10793, c:'法式 bistro · 老牌', p:'€€€', note:'Rue du Bac 侧 · 万评老牌 · 油封鸭 / 牛排 / 洋葱汤 · 位置在圣日耳曼核心但本地客比例高', q:'Les Antiquaires 13 Rue du Bac Paris', tag:'本地人常去' },
+    { n:'Au Père Louis', r:null, rc:null, c:'wine bar · 熟食', p:'€€', note:'38 Rue Monsieur le Prince · 索邦学生 + 老街坊混着坐的小酒馆 · 一杯 €6–9、熟食拼盘 €18–25 · 不做游客生意', q:'Au Pere Louis 38 Rue Monsieur le Prince Paris', tag:'本地人食堂' },
+    { n:'Le Rubis', r:null, rc:null, c:'法式 bistro · 自然酒', p:'€€', note:'14 Rue Léopold Bellan（Montorgueil 片区）· 菜单随季节换 · 本地居民和附近上班族的常备食堂 · 需订', q:'Le Rubis 14 rue Leopold Bellan Paris', tag:'本地人私藏' },
+    { n:'Aux Tonneaux des Halles', r:null, rc:null, c:'平价法餐 + 自然酒', p:'€', note:'28 Rue Montorgueil · <b>所有菜 €20 以内</b> · 传统酒馆菜配自然酒 · 巴黎少见的"便宜但没变游客店"', q:'Aux Tonneaux des Halles 28 Rue Montorgueil Paris', tag:'性价比之王' },
+    { n:'Le Bougainville', r:null, rc:null, c:'法式 bistro · 午市', p:'€€', note:'5 Rue de la Banque（Bourse 片区）· 牛排黑椒 + 薯条 · 附近银行和事务所的午餐食堂 · <b>周日休</b>', q:'Le Bougainville 5 Rue de la Banque Paris' },
   ]},
-  D9:{ area:'凡尔赛午餐 / 拉丁区晚餐', tips:'凡尔赛午餐：宫内 Ore（Alain Ducasse 一星，€80）适合纪念日，否则建议自带简餐进花园野餐；⚠️ 拉丁区 Rue de la Huchette 是游客陷阱重灾区，往 St-Séverin 街走 1 条街才是本地店', list:[
-    { n:'Hestia', r:4.9, rc:205, c:'法餐', p:'€€€', note:'拉丁区小馆，评分极高，需预订' },
-    { n:'Maison Cluny', r:4.8, rc:655, c:'法餐 · 精致', p:'€€€€', note:'Cluny 博物馆旁，品质稳' },
-    { n:'Ostra Paris', r:4.8, rc:208, c:'海鲜', p:'€€€', note:'拉丁区海鲜，蚝吧' },
-    { n:'Grains Nobles', r:4.7, rc:558, c:'法餐', p:'€€€', note:'圣米歇尔附近，本地人晚餐' },
-    { n:'La Petite Bouclerie', r:4.6, rc:794, c:'法餐', p:'€', note:'平价法餐，性价比高' },
+  D9:{ area:'凡尔赛（午） / 拉丁区后街（晚）', tips:'⛔ <b>Rue de la Huchette 整条街 + Saint-Michel 喷泉一圈 = 巴黎头号游客陷阱</b>，菜单五国语言、希腊烤肉店挨着希腊烤肉店 · 今天周日：拉丁区很多店周日休，务必先确认 · 往 Rue Monsieur le Prince / Rue Saint-André-des-Arts 走 2 条街就是本地价 · 凡尔赛午餐建议：花园里野餐（进宫前在小店买三明治），别在宫内餐厅花 €80', list:[
+    { n:'Hestia', r:4.9, rc:205, c:'现代法餐 · 小馆', p:'€€€', note:'拉丁区 · 只有十几桌 · 评分极高但评论不多，属于"还没被游客发现"那一类 · <b>必须订</b> · 周日建议先电话确认', q:'Hestia Paris Latin Quarter restaurant' },
+    { n:'Au Père Louis', r:null, rc:null, c:'wine bar · 熟食', p:'€€', note:'38 Rue Monsieur le Prince · 学生 + 街坊的小酒馆 · 熟食拼盘 €18–25 · 周日是否营业需当天确认', q:'Au Pere Louis 38 Rue Monsieur le Prince Paris', tag:'本地人食堂' },
+    { n:'La Jacobine', r:null, rc:null, c:'传统法式 bistro', p:'€€', note:'59-61 Rue Saint-André des Arts · 中世纪老街上 · 主菜 €18–28 · 约 30 座 · 温羊奶酪沙拉 / 法式青柠派 · 需订', q:'La Jacobine 59 Rue Saint-Andre des Arts Paris' },
+    { n:'La Crêperie', r:null, rc:null, c:'布列塔尼 galette', p:'€', note:'12 Rue Soufflot · 荞麦咸可丽饼 €10–16 · 配一杯布列塔尼苹果酒 cidre · 便宜且本地人真的吃', q:'La Creperie 12 Rue Soufflot Paris', tag:'性价比之王' },
+    { n:'Maison d\'Isabelle', r:null, rc:null, c:'面包房 · 2018 巴黎最佳可颂', p:'€', note:'47ter Bd Saint-Germain · 有机面粉 + 长时间发酵 · <b>10:00 前到，不然卖完</b> · 早餐/外带 €2–6', q:'Maison d Isabelle 47ter Boulevard Saint-Germain Paris', tag:'早餐首选' },
   ]},
-  D10:{ area:'歌剧院 / 橘园 / 卢浮宫', tips:'卢浮宫玻璃金字塔附近全是游客店，往 Palais Royal 拱廊走 3 分钟', list:[
-    { n:'Palais Royal Restaurant', r:4.6, rc:570, c:'米其林二星 · 地中海', p:'€€€€', note:'希腊主厨融合法餐，含亚洲胃' },
-    { n:'Baguett\'s Café', r:4.5, rc:1815, c:'早午餐 / 三明治', p:'€', note:'赶场速食首选，外带三明治+咖啡' },
-    { n:'Daroco Bourse', r:4.3, rc:4789, c:'意大利 · 木火披萨', p:'€€€', note:'前高缇耶旗舰店改造，空间震撼' },
-    { n:'Grand Véfour', r:4.2, rc:802, c:'米其林二星 · 宫廷', p:'€€€€', note:'Palais Royal 拱廊内 200 年传奇' },
-    { n:'Café Kitsuné', r:4.0, rc:1377, c:'咖啡 / 甜品', p:'€€', note:'Palais Royal 花园，狐狸饼干打卡' },
+  D10:{ area:'歌剧院 / 卢浮宫 → Montorgueil 街区', tips:'⛔ 卢浮宫玻璃金字塔、Rue de Rivoli 沿线、Palais Royal 花园里的 Café Kitsuné 这类"打卡咖啡"已全部剔除 · 今天周一：<b>很多巴黎小馆周一休，出门前先看当日营业</b> · 想吃本地价就往北走 10 分钟进 Montorgueil 街区（巴黎最老的菜市场街），比卢浮宫一带便宜一半', list:[
+    { n:'Palais Royal Restaurant', r:4.6, rc:570, c:'米其林二星 · 地中海', p:'€€€€', note:'Palais Royal 拱廊内 · 希腊主厨的融合法餐，对亚洲胃友好 · 全城唯一保留的高档选项：想吃顿好的再进它', q:'Palais Royal Restaurant Paris', tag:'想犒赏时' },
+    { n:'Le Rubis', r:null, rc:null, c:'法式 bistro · 自然酒', p:'€€', note:'14 Rue Léopold Bellan · 季节菜单 · 本地居民私藏 · <b>周一可能休，先订</b>', q:'Le Rubis 14 rue Leopold Bellan Paris', tag:'本地人私藏' },
+    { n:'Aux Tonneaux des Halles', r:null, rc:null, c:'平价法餐 + 自然酒', p:'€', note:'28 Rue Montorgueil · 全菜 €20 以内 · 从卢浮宫走 10 分钟 · 周一是否正常营业需确认', q:'Aux Tonneaux des Halles 28 Rue Montorgueil Paris', tag:'性价比之王' },
+    { n:'Le Chardonnay', r:null, rc:null, c:'法式 bistro + 精选酒', p:'€€', note:'3 Rue Bachaumont · 传统酒馆菜 + 老板选的酒 · 街区上班族的固定据点', q:'Le Chardonnay 3 Rue Bachaumont Paris' },
+    { n:'Le Bougainville', r:null, rc:null, c:'法式 bistro · 午市', p:'€€', note:'5 Rue de la Banque · 牛排黑椒 + 薯条 · <b>周日休（今天周一正常）</b>', q:'Le Bougainville 5 Rue de la Banque Paris' },
   ]},
-  D11:{ area:'玛黑午餐 / 蒙马特晚餐', tips:'避开 Place du Tertre 画家广场正中的店，往 Rue Lepic / Rue des Abbesses 走', list:[
-    { n:'Chantoiseau', r:4.8, rc:534, c:'现代法餐', p:'€€€', note:'Rue Lepic 上，本地人私藏，季节食材', tag:'本地人常去' },
-    { n:'Sacrée Fleur', r:4.8, rc:2419, c:'法式牛排', p:'€€€', note:'蒙马特牛排名店，需订位' },
-    { n:'La Boîte aux Lettres', r:4.8, rc:1779, c:'法式 bistro', p:'€€', note:'Rue Lepic 平价 bistro' },
-    { n:'Le Poulbot', r:4.6, rc:2908, c:'法餐', p:'€€€', note:'蒙马特本地人最爱，远离游客广场', tag:'本地人常去' },
-    { n:'Le Cabanon de la Butte', r:4.6, rc:1158, c:'法餐', p:'€€€', note:'山腰小馆，安静' },
-    { n:'Le Coq & Fils', r:4.5, rc:1196, c:'烤鸡', p:'€€€', note:'巴黎最好烤鸡之一，午市 €19 超值' },
-    { n:'Les Enfants Rouges', r:4.5, rc:539, c:'法餐', p:'€€€', note:'玛黑午餐，牛脸肉入口即化' },
-    { n:'L\'As du Fallafel', r:4.2, rc:5056, c:'Falafel 三明治', p:'€', note:'Rue des Rosiers 人气，外带边走边吃' },
+  D11:{ area:'玛黑（午） / 蒙马特 Rue Lepic（晚）', tips:'⛔ Place du Tertre 画家广场正中、圣心堂台阶下那一圈 = 巴黎第二大游客陷阱；Rue des Rosiers 的 L\'As du Fallafel 现在排队 45 分钟且全是游客 · 蒙马特正确吃法：<b>从圣心堂往下走，Rue Lepic / Rue Véron / Abbesses 片区</b> · ⚠️ Rue Véron 的 Le Matré（米其林推荐）周日到周三休，<b>今天周二不开，别白跑</b>', list:[
+    { n:'Chantoiseau', r:4.8, rc:534, c:'现代法餐', p:'€€€', note:'Rue Lepic 上 · 本地人私藏 · 菜单跟着季节换 · 服务不迎合游客', q:'Chantoiseau Rue Lepic Paris', tag:'本地人私藏' },
+    { n:'La Boîte aux Lettres', r:4.8, rc:1779, c:'法式 bistro', p:'€€', note:'Rue Lepic · 平价 bistro · 口碑稳，游客比例低', q:'La Boite aux Lettres Rue Lepic Paris' },
+    { n:'Au Virage Lepic', r:null, rc:null, c:'老派法式 bistro · 80 年', p:'€€', note:'61 Rue Lepic · <b>只有 8 张桌子，不订进不去</b> · 洋葱汤（奶酪拉丝那种）+ 勃艮第红酒牛肉 + 焦糖布丁 · 老板 Simon 亲自招待 · 本地人当食堂用', q:'Au Virage Lepic 61 Rue Lepic Paris', tag:'本地人食堂' },
+    { n:'Le Poulbot', r:4.6, rc:2908, c:'法餐', p:'€€€', note:'蒙马特山腰 · 离游客广场远 · 本地人重复回头的店', q:'Le Poulbot Paris Montmartre', tag:'本地人常去' },
+    { n:'L\'Îlot', r:null, rc:null, c:'海鲜 · 玛黑老铺', p:'€€', note:'4 Rue de la Corderie（玛黑）· 每晚本地人排队 · 腌鱼 / 酒泡海鲜 / 希腊鱼子泥 · 希腊鱼子泥 taramasalata 和生蚝是招牌', q:'L Ilot 4 Rue de la Corderie Paris', tag:'本地人常去' },
+    { n:'Marché des Enfants Rouges', r:null, rc:null, c:'1615 年市场 · 多国摊档', p:'€', note:'39 Rue de Bretagne（玛黑）· 巴黎最老的市场 · 摩洛哥古斯古斯 / 黎巴嫩 / 日本便当 / 意式烩饭，一餐 €11–20 · 共享木桌 · 排队的那个日料摊档是本地人的心头好', q:'Marche des Enfants Rouges 39 Rue de Bretagne Paris', tag:'本地人食堂' },
   ]},
 };
 
@@ -1240,13 +1239,13 @@ function fmtRc(n) {
   return n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
 }
 function restCard(x) {
-  const cls = x.r >= 4.6 ? 'rb-hi' : (x.r >= 4.3 ? 'rb-mid' : 'rb-low');
+  const cls = x.r == null ? 'rb-local' : (x.r >= 4.6 ? 'rb-hi' : (x.r >= 4.3 ? 'rb-mid' : 'rb-low'));
   const rc = x.rc ? `<span class="rb-rc">${fmtRc(x.rc)}评</span>` : '';
   return `
     <div class="rest-card">
       <div class="rest-badge ${cls}">
-        <span class="rb-r">${x.r ? x.r.toFixed(1) : '—'}</span>
-        <span class="rb-star">${x.r ? '★' : '·'}</span>
+        <span class="rb-r">${x.r == null ? '本地' : x.r.toFixed(1)}</span>
+        <span class="rb-star">${x.r == null ? '' : '★'}</span>
         ${rc}
       </div>
       <div class="rest-info">
@@ -1265,7 +1264,7 @@ function restBlock(dayId) {
     <div class="rest-block">
       <div class="rest-h">
         <div class="rest-t">🍽️ 附近餐厅 · ${r.area}</div>
-        <div class="rest-sub">按 Google 评分排序</div>
+        <div class="rest-sub">本地人取向 · 已剔除网红 / 游客店</div>
       </div>
       ${r.tips ? `<div class="rest-tips">💡 ${r.tips}</div>` : ''}
       <div class="rest-list">${list.map(restCard).join('')}</div>
