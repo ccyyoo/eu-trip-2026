@@ -9,6 +9,9 @@
 <meta name="apple-mobile-web-app-title" content="EU Trip 2026" data-page-node-id="pElG6BaL4SsMgQ2jEPmu6L">
 <meta name="description" content="西班牙·法国 11天行程手册 · 2026.09.26–10.07" data-page-node-id="cQfVzdvFCQVMqZNQ5eufF6">
 <meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>西班牙·法国 11天行程 · 2026.09.26–10.07</title>
 <style>
 :root{
@@ -133,6 +136,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 /* ===== Day Card ===== */
 .day{background:var(--surface);border-radius:var(--radius-lg);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
 .day-head{
+  width:100%;border:0;font:inherit;color:inherit;text-align:left;
   padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
   background:linear-gradient(135deg,var(--day-c,var(--accent)) 0%,color-mix(in srgb,var(--day-c,var(--accent)) 75%,#000 0%) 100%);
   color:#fff;transition:var(--t);
@@ -268,6 +272,94 @@ footer a{color:var(--text-faint)}
 .r-flight{fill:none;stroke-width:1.5;stroke-dasharray:2 2;opacity:.6}
 .r-flight-dot{fill:var(--text-muted)}
 
+/* ===== App 壳（仅手机端生效，>900px 全部隐藏） ===== */
+.appbar,.datebar,.tabbar,.fab{display:none}
+[hidden]{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.vault-empty{
+  display:flex;align-items:center;gap:8px;margin:14px 0 2px;padding:12px;
+  border:1px dashed var(--border);border-radius:var(--radius);background:var(--bg);
+  color:var(--text-muted);font-size:12px;min-height:48px;cursor:pointer;text-align:left;width:100%;
+}
+.vault-empty b{color:var(--text-2);font-weight:600}
+.tickets-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.tickets-day{font-size:13px;font-weight:700;margin-bottom:2px}
+.tickets-sub{font-size:11px;color:var(--text-muted);margin-bottom:10px}
+.tickets-list{display:flex;flex-direction:column;gap:6px}
+.ticket-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font-size:12px;min-height:44px;width:100%;text-align:left}
+.ticket-row .tk-name{font-weight:600;color:var(--text)}
+.ticket-row .tk-note{font-size:10.5px;color:var(--text-muted);margin-top:2px}
+.ticket-row .tk-state{font-size:10px;font-weight:700;color:var(--warn);white-space:nowrap}
+.ticket-row .tk-state-ok{font-size:10px;font-weight:700;color:var(--success);white-space:nowrap}
+
+@media (max-width:900px){
+  .appbar{
+    display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:130;
+    padding:calc(env(safe-area-inset-top) + 6px) 12px 6px;
+    background:var(--surface);border-bottom:1px solid var(--border);
+  }
+  .appbar-btn{
+    width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-size:19px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);flex-shrink:0;
+  }
+  .appbar-title{flex:1;min-width:0;font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .appbar-sync{
+    min-height:44px;padding:0 10px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface-2);font-size:11px;font-weight:600;color:var(--text-2);
+    display:flex;align-items:center;gap:4px;flex-shrink:0;
+  }
+  .datebar{
+    display:flex;gap:8px;overflow-x:auto;position:sticky;z-index:129;
+    padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  }
+  .datebar::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto;min-width:58px;min-height:44px;padding:6px 10px;border-radius:10px;
+    background:var(--surface-2);border:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    font-size:13px;font-weight:600;color:var(--text-2);
+  }
+  .chip span{font-size:10px;font-weight:500;opacity:.8}
+  .chip[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:140;
+    padding-bottom:env(safe-area-inset-bottom);
+    background:var(--surface);border-top:1px solid var(--border);
+  }
+  .tab{
+    flex:1;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;font-size:11px;color:var(--text-muted);font-weight:500;
+  }
+  .tab i{font-style:normal;font-size:18px;line-height:1}
+  .tab[aria-current="page"]{color:var(--accent);font-weight:700}
+  .fab{
+    display:flex;align-items:center;gap:6px;position:fixed;right:14px;z-index:135;
+    bottom:calc(70px + env(safe-area-inset-bottom));
+    min-height:48px;padding:0 16px;border-radius:24px;
+    background:var(--accent);color:#fff;font-size:14px;font-weight:700;box-shadow:var(--shadow-lg);
+  }
+  .fab em{font-style:normal}
+  /* 底部留白须盖住最高的固定层：FAB（bottom 70px + 高 48px = 距底 118px）再留 12px 呼吸，
+     否则账本导出按钮组、末日行程等页尾内容会被悬浮按钮压住点不到 */
+  body{padding-bottom:calc(130px + env(safe-area-inset-bottom))}
+  .main-wrap{margin-left:0}
+  .sidebar{width:min(84vw,320px);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  .sidebar-nav a{min-height:44px}
+  .menu-btn{display:none}
+  .day-head{min-height:56px}
+  .qr-card{min-height:48px}
+  .day-route-link,.rest-map{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;margin:0 -8px}
+  /* 行内链接用纵向 padding 扩大热区：inline 元素的上下 padding 不撑开行高，
+     但会计入命中区域，因此既不破坏排版又能把点击高度补到 40px 以上 */
+  .evt-title a,.evt-desc a,.tip-content a,.rest-name a,footer a{padding:12px 0}
+  .tip-content a,footer a{display:inline-block}
+  .datebar .chip{scroll-snap-align:start}
+}
+@media (min-width:901px){
+  .sidebar-nav .nav-ledger{display:flex}
+}
+
 /* ===== 缩放 ===== */
 @media (max-width:380px){
   .cd{min-width:54px;padding:8px 2px}
@@ -381,8 +473,161 @@ footer a{color:var(--text-faint)}
   .main-wrap{margin-left:0}
 }
 </style>
+<style>
+/* =============================================================
+   旅行账本（ledger.js）样式
+   全部走 :root 变量，自动跟随明暗主题；触控目标 ≥ 40px。
+   ============================================================= */
+.lg-tabs{display:flex;gap:6px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:999px;padding:4px;margin:0 0 14px}
+.lg-tab{flex:1;min-height:40px;border:0;border-radius:999px;background:transparent;
+  color:var(--text-2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.lg-tab.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.lg-panel{display:flex;flex-direction:column;gap:12px}
+.lg-empty{padding:28px 16px;text-align:center;color:var(--text-muted);font-size:13px;
+  background:var(--surface-2);border:1px dashed var(--border-strong);border-radius:var(--radius)}
+.lg-hint{font-size:11.5px;line-height:1.6;color:var(--text-muted)}
+.lg-cta{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.lg-total{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.lg-total-l{font-size:12px;color:var(--text-muted)}
+.lg-total-v{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:4px 0 2px;color:var(--text)}
+.lg-total-s{font-size:12px;color:var(--text-muted)}
+
+.lg-day{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.lg-day-h{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;
+  background:var(--surface-2);font-size:12px;font-weight:700;color:var(--text-2);border-bottom:1px solid var(--border)}
+.lg-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.lg-row:last-child{border-bottom:0}
+.lg-row-main{flex:1;min-width:0}
+.lg-row-t{font-size:13.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-row-s{font-size:11px;color:var(--text-muted);margin-top:2px}
+.lg-row-amt{text-align:right;flex-shrink:0}
+.lg-amt-b{font-size:15px;font-weight:700;color:var(--text)}
+.lg-amt-o{font-size:11px;color:var(--text-muted);margin-top:1px}
+.lg-row-act{display:flex;gap:6px;flex-shrink:0}
+
+.lg-people{display:flex;flex-direction:column;gap:8px}
+.lg-person-card{display:flex;align-items:center;gap:10px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.lg-person-info{flex:1;min-width:0}
+.lg-person-name{font-size:14px;font-weight:700;color:var(--text)}
+.lg-person-sub{font-size:11.5px;color:var(--text-muted);margin-top:2px}
+/* 遵循国内习惯：红＝应收（钱进来）/ 绿＝应付（钱出去） */
+.lg-net{font-size:13px;font-weight:700;flex-shrink:0;color:var(--text-muted)}
+.lg-net.pos{color:var(--danger)}
+.lg-net.neg{color:var(--success)}
+.lg-av{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:700;flex-shrink:0}
+.lg-settle{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.lg-settle-t{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:8px}
+.lg-transfer{padding:8px 0;border-bottom:1px dashed var(--border);font-size:13.5px;color:var(--text)}
+.lg-transfer:last-child{border-bottom:0}
+.lg-transfer b{color:var(--danger)}
+
+.lg-stat-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.lg-stat-t{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:10px}
+.lg-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.lg-bar-row:last-child{margin-bottom:0}
+.lg-bar-l{width:52px;flex-shrink:0;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-bar{flex:1;height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden;display:block}
+.lg-bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.lg-bar-v{width:76px;text-align:right;flex-shrink:0;font-weight:700;color:var(--text)}
+
+.lg-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)}
+.lg-mini{min-height:36px;padding:0 12px;border:1px solid var(--border-strong);border-radius:999px;
+  background:var(--surface);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.lg-mini:active{opacity:.85}
+.lg-mini-danger{color:var(--danger);border-color:var(--danger)}
+.lg-btn{min-height:44px;padding:0 18px;border:1px solid var(--border-strong);border-radius:var(--radius);
+  background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.lg-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.lg-btn-lg{min-height:48px;width:100%;font-size:15px}
+
+.lg-field{display:flex;flex-direction:column;gap:8px}
+.lg-lbl{font-size:12px;font-weight:700;color:var(--text-2)}
+.lg-chips{display:flex;flex-wrap:wrap;gap:8px}
+.lg-chip{min-height:40px;padding:0 14px;border:1px solid var(--border-strong);border-radius:999px;
+  background:var(--surface);color:var(--text-2);font-size:13px;cursor:pointer;font-family:inherit}
+.lg-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.lg-persons{display:flex;flex-wrap:wrap;gap:8px}
+.lg-person{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;
+  border:1px solid var(--border-strong);border-radius:999px;background:var(--surface);
+  color:var(--text-2);font-size:13px;cursor:pointer;font-family:inherit}
+.lg-person.on{border-color:var(--accent);color:var(--text);font-weight:700;box-shadow:inset 0 0 0 1px var(--accent)}
+.lg-person .lg-av{width:30px;height:30px;font-size:12.5px}
+.lg-amount{width:100%;min-height:56px;padding:0 14px;border:1px solid var(--border-strong);
+  border-radius:var(--radius);background:var(--surface);color:var(--text);
+  font-size:28px;font-weight:800;font-family:inherit;letter-spacing:-.5px}
+.lg-input,.lg-date{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--border-strong);
+  border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:14px;font-family:inherit}
+.lg-fx{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;
+  display:flex;flex-direction:column;gap:8px}
+.lg-fx-line{font-size:14px;color:var(--text-2)}
+.lg-fx-line b{color:var(--text);font-size:16px}
+.lg-fx-edit{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--text-muted)}
+.lg-fx-edit label{display:inline-flex;align-items:center;gap:6px}
+.lg-fx-edit input{width:96px;min-height:38px;padding:0 8px;border:1px solid var(--border-strong);
+  border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;font-family:inherit}
+.lg-share{font-size:12px;color:var(--accent);font-weight:700}
+.lg-form-actions{display:flex;gap:10px;margin-top:6px}
+.lg-form-actions .lg-btn{flex:1}
+
+/* ---- 记一笔弹层 ---- */
+.lg-overlay{position:fixed;inset:0;z-index:1200;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(15,23,42,.45);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.lg-overlay.show{display:flex}
+.lg-sheet{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--surface);
+  border-radius:18px 18px 0 0;box-shadow:var(--shadow-lg);
+  padding:14px 16px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.lg-sheet-h{display:flex;align-items:center;justify-content:space-between;position:sticky;top:-14px;
+  background:var(--surface);padding:2px 0 8px;margin:-14px 0 0;z-index:1}
+.lg-sheet-title{font-size:16px;font-weight:800;color:var(--text)}
+.lg-sheet-x{min-width:40px;min-height:40px;border:0;border-radius:50%;background:var(--surface-2);
+  color:var(--text-2);font-size:15px;cursor:pointer;font-family:inherit}
+.lg-sheet-body{display:flex;flex-direction:column;gap:14px}
+@media (min-width:901px){
+  .lg-overlay{align-items:center}
+  .lg-sheet{border-radius:18px;max-height:84vh}
+}
+
+/* ---- 冲突弹层 ---- */
+.lg-conflict-card{width:100%;max-width:560px;max-height:84vh;overflow-y:auto;background:var(--surface);
+  border-radius:18px;box-shadow:var(--shadow-lg);padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:12px;margin:16px}
+.lg-conflict{border:1px solid var(--border);border-radius:var(--radius);padding:12px;background:var(--surface-2)}
+.lg-conflict.resolved{opacity:.55}
+.lg-conflict-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.lg-conflict-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12.5px}
+.lg-cf-lbl{width:36px;flex-shrink:0;color:var(--text-muted)}
+.lg-cf-val{flex:1;min-width:0;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---- 提示条 ---- */
+.lg-toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(86px + env(safe-area-inset-bottom));
+  z-index:1300;max-width:min(92vw,420px);background:var(--text);color:var(--bg);
+  border-radius:12px;padding:12px 16px;font-size:13px;line-height:1.5;box-shadow:var(--shadow-lg);
+  opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.lg-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.lg-toast [data-undo]{background:transparent;border:1px solid currentColor;color:inherit;
+  border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:8px}
+@media (min-width:901px){ .lg-toast{bottom:28px} }
+</style>
 </head>
-<body data-page-node-id="YH6PftmKroLD8GZsR8e2Vy">
+<body data-page-node-id="YH6PftmKroLD8GZsR8e2Vy" data-view="days">
+
+<!-- ===== App 壳（手机端） ===== -->
+<header class="appbar" id="appbar">
+  <button class="appbar-btn" id="appbar-menu" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar">☰</button>
+  <div class="appbar-title" id="appbar-title">逐日行程</div>
+  <button class="appbar-sync" id="sync-indicator" type="button">本机保存</button>
+</header>
+<nav class="datebar" id="datebar" role="tablist" aria-label="日期快捷切换"></nav>
+<button class="fab" id="fab-add" type="button" aria-label="记一笔"><span aria-hidden="true">＋</span><em>记一笔</em></button>
+<nav class="tabbar" id="tabbar" aria-label="主导航">
+  <button class="tab" type="button" data-nav-tab="days" aria-current="page"><i aria-hidden="true">📅</i><span>行程</span></button>
+  <button class="tab" type="button" data-nav-tab="tickets"><i aria-hidden="true">🎫</i><span>票务</span></button>
+  <button class="tab" type="button" data-nav-tab="ledger"><i aria-hidden="true">💰</i><span>账本</span></button>
+  <button class="tab" type="button" data-nav-tab="more"><i aria-hidden="true">☰</i><span>更多</span></button>
+</nav>
 
 <!-- ===== 左侧菜单栏 ===== -->
 <button class="menu-btn" id="menu-btn" aria-label="打开菜单" onclick="toggleSidebar()">☰</button>
@@ -399,7 +644,9 @@ footer a{color:var(--text-faint)}
     <a href="#sec-weather" data-nav><span class="ico">🌤️</span>天气预报</a>
     <a href="#sec-days" data-nav><span class="ico">📅</span>逐日行程</a>
     <div class="sidebar-section">凭证（口令解锁）</div>
-    <a href="#sec-days" data-nav><span class="ico">🎫</span>门票/车票<span class="nav-tag">🔒</span></a>
+    <a href="#sec-tickets" data-nav><span class="ico">🎫</span>门票/车票<span class="nav-tag">🔒</span></a>
+    <div class="sidebar-section">账本</div>
+    <a href="#sec-ledger" data-nav><span class="ico">💰</span>旅行账本</a>
     <div class="sidebar-section">更多</div>
     <a href="#sec-tips" data-nav><span class="ico">💡</span>实用贴士</a>
   </nav>
@@ -557,6 +804,24 @@ footer a{color:var(--text-faint)}
     <div class="section-subtitle" data-page-node-id="DtLpkLkF61xWzImnj8SCTM">点击标题展开/收起 · 每天可折叠路线图 + 一键导航</div>
   </div>
   <div id="days" data-page-node-id="5h3cpDtgYGRvx7Y5Ay184G"></div>
+</section>
+
+<!-- ===== 5. 票务（凭证聚合） ===== -->
+<section class="section" id="sec-tickets">
+  <div class="section-head">
+    <div class="section-title">🎫 门票 / 车票</div>
+    <div class="section-subtitle">按日期聚合 · 口令解锁后显示可用凭证</div>
+  </div>
+  <div id="tickets-root"></div>
+</section>
+
+<!-- ===== 5b. 旅行账本 ===== -->
+<section class="section" id="sec-ledger">
+  <div class="section-head">
+    <div class="section-title">💰 旅行账本</div>
+    <div class="section-subtitle">两人分摊 · 数据保存在本机 · 可导出备份与合并</div>
+  </div>
+  <div id="ledger-root"></div>
 </section>
 
 <!-- ===== 6. 实用贴士 ===== -->
@@ -1354,20 +1619,20 @@ function renderWeather() {
 function renderDays() {
   const root = document.getElementById('days');
   root.innerHTML = DAYS.map(d => {
-    const allPlaces = d.events.map(e => e.title).filter(t => !t.match(/退房|出发|去|到|抵达|步行|换/));
     const routeOrigin = d.route[0] || '';
     const routeDest = d.route[d.route.length - 1] || '';
     const routeWps = d.route.slice(1, -1);
+    const bodyId = 'daybody-' + d.id;
     return `
     <div class="day" data-day="${d.id}">
-      <div class="day-head ${d.country}" onclick="this.parentElement.classList.toggle('collapsed')">
-        <div class="day-head-l">
-          <div class="day-title">${d.dateLabel} · ${d.city} <span class="day-title-tag">${d.id}</span></div>
-          <div class="day-sub">${d.subtitle}</div>
-        </div>
-        <div class="day-toggle">▼</div>
-      </div>
-      <div class="day-body">
+      <button class="day-head ${d.country}" type="button" aria-expanded="false" aria-controls="${bodyId}" data-day-toggle="${d.id}">
+        <span class="day-head-l">
+          <span class="day-title">${d.dateLabel} · ${d.city} <span class="day-title-tag">${d.id}</span></span>
+          <span class="day-sub">${d.subtitle}</span>
+        </span>
+        <span class="day-toggle" aria-hidden="true">▼</span>
+      </button>
+      <div class="day-body" id="${bodyId}">
         <div class="day-route">
           <div class="day-route-h">
             <div class="day-route-t">📍 当日路线</div>
@@ -1376,8 +1641,7 @@ function renderDays() {
           <div class="day-route-s">${d.route.join(' → ')}</div>
           <div class="day-route-cities">${d.events.length} 个时间点 · 详情见下方</div>
         </div>
-        ${LOCKED[d.id] ? `<div class="locked"><div class="locked-title">🔒 已锁定</div>${LOCKED[d.id].map(l => `<div class="locked-row"><span class="locked-cat">${l.cat}</span><span class="locked-val">${l.val}</span></div>`).join('')}</div>` : ''}
-        ${QR_SLOTS[d.id] ? qrBlock(QR_SLOTS[d.id]) : ''}
+        <div class="vault" data-day="${d.id}"></div>
         <div class="timeline">
           ${d.events.map(e => `
             <div class="evt ${e.cls || ''}">
@@ -1429,7 +1693,9 @@ function confirmUnlock() {
   if (v === PASSWORD) {
     qrUnlocked = true;
     closeQrModal();
-    renderDays(); // 重渲染以显示二维码
+    // 只刷新凭证区，保留折叠状态（不再整体重渲染）
+    if (typeof refreshVault === 'function') { refreshVault(); }
+    else { renderDays(); }
   } else {
     document.getElementById('qr-err').classList.add('show');
     const inp = document.getElementById('qr-pw');
@@ -1452,14 +1718,20 @@ function toggleSidebar() {
 }
 
 // ===== 导航高亮 =====
+function visibleSections() {
+  // 只统计当前视图内可见的区块，避免隐藏区块把高亮顶到最后一项
+  return ['sec-todo','sec-route','sec-weather','sec-days','sec-tickets','sec-ledger','sec-tips']
+    .map(id => document.getElementById(id))
+    .filter(el => el && !el.hidden && el.offsetParent !== null);
+}
 function highlightNav() {
   const links = document.querySelectorAll('[data-nav]');
-  const sections = ['sec-todo','sec-route','sec-weather','sec-days','sec-tips'];
+  const els = visibleSections();
   let cur = '';
-  for (const id of sections) {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top <= 80) cur = id;
+  for (const el of els) {
+    if (el.getBoundingClientRect().top <= 80) cur = el.id;
   }
+  if (!cur && els.length) cur = els[0].id;
   links.forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
   });
@@ -1496,6 +1768,55 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
+}
+
+/* ===== 全局出口 =====
+   DAYS / RESTAURANTS / LOCKED / QR_SLOTS 是顶层 const，qrUnlocked 是顶层 let，
+   它们属于脚本词法作用域，不会自动挂到 window 上。app.js / ledger.js 统一按
+   window.X 读取，这里显式导出，避免子脚本拿到 undefined。 */
+window.DAYS = DAYS;
+window.RESTAURANTS = RESTAURANTS;
+window.LOCKED = LOCKED;
+window.QR_SLOTS = QR_SLOTS;
+window.TODOS = TODOS;
+Object.defineProperty(window, 'qrUnlocked', {
+  get: function () { return qrUnlocked; },
+  configurable: true
+});
+</script>
+
+<!-- ===== 账本浮层：记一笔 / 合并冲突 / 提示条 ===== -->
+<div class="lg-overlay" id="lg-sheet" aria-hidden="true">
+  <div class="lg-sheet" role="dialog" aria-modal="true" aria-labelledby="lg-sheet-title">
+    <div class="lg-sheet-h">
+      <div class="lg-sheet-title" id="lg-sheet-title">记一笔</div>
+      <button type="button" class="lg-sheet-x" data-act="close" aria-label="关闭">✕</button>
+    </div>
+    <div class="lg-sheet-body" id="lg-sheet-body"></div>
+  </div>
+</div>
+
+<div class="lg-overlay" id="lg-conflicts" aria-hidden="true">
+  <div class="lg-conflict-card" role="dialog" aria-modal="true" aria-labelledby="lg-conflict-title">
+    <div class="lg-conflict-t" id="lg-conflict-title">合并冲突</div>
+    <div id="lg-conflict-body"></div>
+    <div class="lg-form-actions">
+      <button type="button" class="lg-btn" data-act="close-conflicts">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="lg-toast" id="lg-toast" role="status" aria-live="polite"></div>
+<input type="file" id="lg-file" accept="application/json,.json" hidden>
+
+<script src="app.js"></script>
+<script src="ledger.js"></script>
+<script>
+/* 注册离线 Service Worker（仅 https / localhost 生效，GitHub Pages 满足） */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* 忽略：不支持时不影响页面 */ });
+  });
 }
 </script>
 </body>

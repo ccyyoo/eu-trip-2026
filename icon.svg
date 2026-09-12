@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="西班牙·法国 2026 行程">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B3954"/>
+      <stop offset="1" stop-color="#1E5A7E"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#g)"/>
+  <circle cx="256" cy="200" r="112" fill="none" stroke="#FFFFFF" stroke-width="18" opacity=".9"/>
+  <path d="M256 88v224M144 200h224" stroke="#FFFFFF" stroke-width="14" opacity=".55" stroke-linecap="round"/>
+  <path d="M120 372 L392 300 L360 392 L288 360 L232 424 Z" fill="#FFFFFF" opacity=".95"/>
+  <text x="256" y="470" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="52" font-weight="700"
+        fill="#FFFFFF" text-anchor="middle" letter-spacing="2">9.26–10.7</text>
+</svg>
