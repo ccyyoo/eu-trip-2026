@@ -177,7 +177,12 @@
         : '<span class="tk-state">🔒 未解锁</span>';
       return '' +
         '<div class="tickets-card">' +
-          '<div class="tickets-day">' + g.d.dateLabel + ' · ' + g.d.city + ' ' + state + '</div>' +
+          /* 日期标题本身就是「去看这天行程」的入口，不需要口令——
+             行程是公开内容，凭证才需要解锁。 */
+          '<button class="tickets-day" type="button" data-goto-day="' + g.d.id + '">' +
+            '<span>' + g.d.dateLabel + ' · ' + g.d.city + '</span>' + state +
+            '<span class="tk-go" aria-hidden="true">›</span>' +
+          '</button>' +
           '<div class="tickets-sub">' + g.items.length + ' 项凭证</div>' +
           '<div class="tickets-list">' +
             g.items.map(function (it) {
@@ -190,14 +195,10 @@
     }).join('');
   }
 
+  /* 点凭证行：凭证本身要口令才看得到，未解锁先弹口令；已解锁则跳到当天行程 */
   function onTicketClick(dayId) {
     if (!window.qrUnlocked) { window.openQrModal(); return; }
-    setView('days');
-    uiState.openDays = [dayId];
-    uiState.activeDay = dayId;
-    saveUI();
-    syncDayState();
-    scrollToDay(dayId);
+    gotoDay(dayId);
   }
 
   /* ---------- 日期条 ---------- */
@@ -213,15 +214,34 @@
     }).join('');
   }
 
+  /* 吸顶高度直接量 masthead：它整体 sticky，量到的就是真正遮住内容的高度。
+     此前按 appbar+datebar 分别量，而 datebar 当时并未吸顶，多减了它的高度，
+     结果目标日期落在吸顶区下方一大截空白处。 */
+  function stickyOffset() {
+    var head = $('masthead');
+    if (head && getComputedStyle(head).display !== 'none') return head.offsetHeight + 8;
+    return 8;
+  }
+
   function scrollToDay(id) {
     var el = document.querySelector('.day[data-day="' + id + '"]');
     if (!el) return;
-    var bar = $('appbar'), datebar = $('datebar');
-    var offset = (bar ? bar.offsetHeight : 0) + (datebar ? datebar.offsetHeight : 0) + 8;
+    var offset = stickyOffset();
     var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
     window.scrollTo({ top: top < 0 ? 0 : top, behavior: 'smooth' });
     var chip = document.querySelector('#datebar .chip[data-day="' + id + '"]');
     if (chip && chip.scrollIntoView) chip.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+
+  /* 跳到某一日：切回行程视图 → 只展开这一天 → 滚到吸顶区正下方 */
+  function gotoDay(id) {
+    if (!id) return;
+    if (uiState.view !== 'days') setView('days');
+    uiState.openDays = [id];
+    uiState.activeDay = id;
+    saveUI();
+    syncDayState();
+    scrollToDay(id);
   }
 
   /* ---------- 视图切换 ---------- */
@@ -343,12 +363,7 @@
       bar.addEventListener('click', function (e) {
         var chip = e.target.closest ? e.target.closest('.chip[data-day]') : null;
         if (!chip) return;
-        var id = chip.getAttribute('data-day');
-        uiState.openDays = [id];
-        uiState.activeDay = id;
-        saveUI();
-        syncDayState();
-        scrollToDay(id);
+        gotoDay(chip.getAttribute('data-day'));
       });
       bar.addEventListener('keydown', function (e) {
         if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -361,11 +376,14 @@
       });
     }
 
-    /* 票务 */
+    /* 票务：日期标题直接跳行程，凭证行需先解锁 */
     var tickets = $('tickets-root');
     if (tickets) {
       tickets.addEventListener('click', function (e) {
-        var row = e.target.closest ? e.target.closest('[data-ticket-day]') : null;
+        if (!e.target.closest) return;
+        var day = e.target.closest('[data-goto-day]');
+        if (day) { gotoDay(day.getAttribute('data-goto-day')); return; }
+        var row = e.target.closest('[data-ticket-day]');
         if (row) onTicketClick(row.getAttribute('data-ticket-day'));
       });
     }

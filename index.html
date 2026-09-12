@@ -273,7 +273,7 @@ footer a{color:var(--text-faint)}
 .r-flight-dot{fill:var(--text-muted)}
 
 /* ===== App 壳（仅手机端生效，>900px 全部隐藏） ===== */
-.appbar,.datebar,.tabbar,.fab{display:none}
+.masthead,.appbar,.datebar,.tabbar,.fab{display:none}
 [hidden]{display:none !important}
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .vault-empty{
@@ -283,7 +283,14 @@ footer a{color:var(--text-faint)}
 }
 .vault-empty b{color:var(--text-2);font-weight:600}
 .tickets-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.tickets-day{font-size:13px;font-weight:700;margin-bottom:2px}
+.tickets-day{
+  display:flex;align-items:center;gap:8px;width:100%;min-height:44px;
+  padding:0;border:0;background:transparent;cursor:pointer;font:inherit;
+  font-size:13px;font-weight:700;color:var(--text);text-align:left
+}
+.tickets-day>span:first-child{flex:1;min-width:0}
+.tickets-day:active{opacity:.6}
+.tk-go{font-size:18px;line-height:1;color:var(--text-muted);flex-shrink:0}
 .tickets-sub{font-size:11px;color:var(--text-muted);margin-bottom:10px}
 .tickets-list{display:flex;flex-direction:column;gap:6px}
 .ticket-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;font-size:12px;min-height:44px;width:100%;text-align:left}
@@ -293,8 +300,10 @@ footer a{color:var(--text-faint)}
 .ticket-row .tk-state-ok{font-size:10px;font-weight:700;color:var(--success);white-space:nowrap}
 
 @media (max-width:900px){
+  /* 吸顶由外层 masthead 统一负责：整体 sticky，不受内部高度变化影响 */
+  .masthead{display:block;position:sticky;top:0;z-index:130;background:var(--surface)}
   .appbar{
-    display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:130;
+    display:flex;align-items:center;gap:10px;
     padding:calc(env(safe-area-inset-top) + 6px) 12px 6px;
     background:var(--surface);border-bottom:1px solid var(--border);
   }
@@ -309,7 +318,7 @@ footer a{color:var(--text-faint)}
     display:flex;align-items:center;gap:4px;flex-shrink:0;
   }
   .datebar{
-    display:flex;gap:8px;overflow-x:auto;position:sticky;z-index:129;
+    display:flex;gap:8px;overflow-x:auto;
     padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);
     scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
   }
@@ -614,13 +623,18 @@ footer a{color:var(--text-faint)}
 </head>
 <body data-page-node-id="YH6PftmKroLD8GZsR8e2Vy" data-view="days">
 
-<!-- ===== App 壳（手机端） ===== -->
-<header class="appbar" id="appbar">
-  <button class="appbar-btn" id="appbar-menu" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar">☰</button>
-  <div class="appbar-title" id="appbar-title">逐日行程</div>
-  <button class="appbar-sync" id="sync-indicator" type="button">本机保存</button>
-</header>
-<nav class="datebar" id="datebar" role="tablist" aria-label="日期快捷切换"></nav>
+<!-- ===== App 壳（手机端） =====
+     appbar 与 datebar 放进同一个 sticky 容器整体吸顶。
+     分开各自 sticky 时，datebar 必须知道 appbar 的动态高度（含安全区）
+     才能算出正确的 top，任何一处高度变化都会让日期条跑偏或滚出视口。 -->
+<div class="masthead" id="masthead">
+  <header class="appbar" id="appbar">
+    <button class="appbar-btn" id="appbar-menu" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="sidebar">☰</button>
+    <div class="appbar-title" id="appbar-title">逐日行程</div>
+    <button class="appbar-sync" id="sync-indicator" type="button">本机保存</button>
+  </header>
+  <nav class="datebar" id="datebar" role="tablist" aria-label="日期快捷切换"></nav>
+</div>
 <button class="fab" id="fab-add" type="button" aria-label="记一笔"><span aria-hidden="true">＋</span><em>记一笔</em></button>
 <nav class="tabbar" id="tabbar" aria-label="主导航">
   <button class="tab" type="button" data-nav-tab="days" aria-current="page"><i aria-hidden="true">📅</i><span>行程</span></button>
