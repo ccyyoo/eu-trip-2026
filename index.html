@@ -26,6 +26,8 @@
   --spain:#C0534C;--spain-bg:#FBE9E8;--spain-soft:#FEF6F5;
   --france:#3E6FA8;--france-bg:#E9F1FA;--france-soft:#F2F7FC;
   --nice:#12868C;--nice-bg:#E1F2F4;
+  /* 每日地图的陆/海底色。陆比画布略亮、海比陆更冷更深，才有「地在水边」的层次 */
+  --dm-land:#FFFFFF;--dm-sea:#D9EDF0;
   --paris:#55658A;--paris-bg:#ECEFF5;
   --accent:#0E8079;--accent-2:#0E7490;
   /* 语义色同样按 AA 取深一档：账本里「应收/应付」是 13px 粗体小字，浅一档就看不清 */
@@ -44,6 +46,7 @@
     --spain:#FF7A85;--spain-bg:#3A1E24;--spain-soft:#2A151A;
     --france:#7FB3E8;--france-bg:#16283C;--france-soft:#111E2C;
     --nice:#4FD6CB;--nice-bg:#0E2E2C;
+    --dm-land:#122226;--dm-sea:#0A1C20;
     --paris:#9AAED0;--paris-bg:#1C2531;
     --accent:#2DD4BF;--accent-2:#5BC8E0;
     --warn:#FBBF24;--warn-bg:#3A2C0C;
@@ -175,6 +178,62 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .day-route-link{font-size:11px;color:var(--accent-2);font-weight:600;white-space:nowrap}
 .day-route-s{font-size:11px;color:var(--text-2);line-height:1.5}
 .day-route-cities{color:var(--text-muted);font-size:10px;margin-top:4px}
+
+/* ===== 每日地图（见 daymap.js） =====
+   配色全部走主题变量，深浅色模式自动跟随；水/岸/路用同一套蓝绿家族降饱和处理，
+   保证它们永远比当天的路线色（--accent 一档的实色）更轻，不会抢视觉。 */
+.day-map{margin:9px 0 2px}
+.day-map-canvas{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  /* 宽屏下 SVG 会被拉到与卡片同宽，实测高 607px，一屏装不下两天。
+     限到 460px 后高度约 390px，和手机上的观感一致；手机上容器本来就窄，不受影响。 */
+  max-width:460px;
+}
+.dm-svg{width:100%;height:auto;display:block}
+/* 底图：先铺一条粗的浅蓝做出水面层次，再压细线勾岸 */
+.dm-land{fill:var(--dm-land)}
+.dm-sea{fill:var(--dm-sea)}
+.dm-coast{fill:none;stroke:var(--accent-2);stroke-width:1.4;opacity:.55}
+.dm-river{fill:none;stroke:var(--border-strong);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.dm-island{fill:var(--surface);stroke:var(--border-strong);stroke-width:.8}
+.dm-hill{fill:var(--surface-2);stroke:var(--border-strong);stroke-width:.8}
+.dm-road{fill:none;stroke:var(--border-strong);stroke-width:1.4;stroke-linecap:round;opacity:.85}
+.dm-rail{fill:none;stroke:var(--text-faint);stroke-width:1;stroke-dasharray:6 4;opacity:.65}
+.dm-ring{fill:none;stroke:var(--border-strong);stroke-width:1;stroke-dasharray:4 4;opacity:.9}
+.dm-border{fill:none;stroke:var(--text-faint);stroke-width:1;stroke-dasharray:5 4;opacity:.5}
+.dm-city{fill:var(--surface);stroke:var(--text-faint);stroke-width:1.2}
+.dm-city-t{font-size:15px;fill:var(--text-faint);font-family:system-ui,-apple-system,sans-serif}
+.dm-note{font-size:16px;fill:var(--text-faint);font-family:system-ui,-apple-system,sans-serif;font-style:italic;opacity:.9}
+/* 当天路线 */
+.dm-leg{stroke-width:3.5;stroke-linecap:round;opacity:.95}
+.dm-leg-far{stroke-dasharray:9 7;opacity:.5}
+.dm-fly{font-size:20px;fill:var(--text-2);font-family:system-ui,-apple-system,sans-serif}
+.dm-chip rect{fill:var(--surface);stroke:var(--border);stroke-width:1}
+.dm-chip text{font-size:16px;fill:var(--text-2);font-family:system-ui,-apple-system,sans-serif;font-weight:600}
+/* 节点 */
+.dm-node text{font-family:system-ui,-apple-system,sans-serif}
+.dm-hit{fill:transparent}
+/* 标签描一层底色，压在路线和底图上也读得清 */
+.dm-lbl{
+  font-size:20px;font-weight:700;fill:var(--text);font-family:system-ui,-apple-system,sans-serif;
+  stroke:var(--surface);stroke-width:5;paint-order:stroke;stroke-linejoin:round;
+}
+.dm-num{font-size:16px;font-weight:700;fill:#fff}
+/* 地图下方清单：编号与圆点一一对应，点击直达该地点 */
+.day-map-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.dm-item{
+  display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:4px 11px 4px 5px;
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  font-size:12px;color:var(--text-2);text-decoration:none;
+}
+.dm-item:active{opacity:.6}
+.dm-item-n{
+  width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.dm-item-t{white-space:nowrap}
+.dm-item-go{color:var(--text-faint);font-size:15px;line-height:1}
+.day-map-foot{margin-top:7px;font-size:10px;color:var(--text-faint);line-height:1.5}
 
 .locked{margin:14px 0 2px;padding:10px 12px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)}
 .locked-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1px;margin-bottom:6px}
@@ -959,6 +1018,11 @@ footer a{color:var(--text-faint)}
   </div>
 </div>
 
+<!-- 每日地图：坐标表 + 底图骨架 + SVG 生成。
+     必须同步加载在主数据脚本之前——renderDays() 在下面那个脚本里同步调用，
+     defer 会排到文档解析之后，第一次渲染就拿不到 window.dayMap。 -->
+<script src="daymap.js"></script>
+
 <script>
 /* =============================================================
    DATA — 行程数据（v1.0 锁定）
@@ -1636,6 +1700,19 @@ function renderWeather() {
 }
 
 // 渲染逐日行程
+/* 每日地图：daymap.js 按 route 的经纬度生成，坐标表缺项时退回文字路线，
+   不能让「当日路线」这一块整个空掉。 */
+function dayMapHtml(d) {
+  let html = '';
+  try {
+    if (typeof window.dayMap === 'function') { html = window.dayMap(d); }
+  } catch (err) {
+    html = '';
+    if (window.console) { console.warn('dayMap 渲染失败', d.id, err); }
+  }
+  return html || '<div class="day-route-s">' + d.route.join(' → ') + '</div>';
+}
+
 function renderDays() {
   const root = document.getElementById('days');
   root.innerHTML = DAYS.map(d => {
@@ -1658,8 +1735,8 @@ function renderDays() {
             <div class="day-route-t">📍 当日路线</div>
             <a class="day-route-link" href="${gdir(routeOrigin, routeDest, routeWps)}" target="_blank" rel="noopener">一键导航 →</a>
           </div>
-          <div class="day-route-s">${d.route.join(' → ')}</div>
-          <div class="day-route-cities">${d.events.length} 个时间点 · 详情见下方</div>
+          ${dayMapHtml(d)}
+          <div class="day-route-cities">${d.events.length} 个时间点 · ${d.route.length} 个地点 · 见下方时间轴</div>
         </div>
         <div class="vault" data-day="${d.id}"></div>
         <div class="timeline">
