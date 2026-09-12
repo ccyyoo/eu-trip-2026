@@ -91,8 +91,9 @@
       tripId: TRIP_ID,
       settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
       travelers: [
-        { id: 'p-yy', name: '陈圆圆', initial: '陈', color: '#D96C42', createdAt: nowIso(), updatedAt: nowIso(), deleted: false },
-        { id: 'p-lm', name: '刘敏', initial: '刘', color: '#3B7CA8', createdAt: nowIso(), updatedAt: nowIso(), deleted: false }
+        /* 成员色取自同一蓝绿家族，靠明度区分：主 teal / 亮青蓝 */
+        { id: 'p-yy', name: '陈圆圆', initial: '陈', color: '#0E8079', createdAt: nowIso(), updatedAt: nowIso(), deleted: false },
+        { id: 'p-lm', name: '刘敏', initial: '刘', color: '#4A9BB5', createdAt: nowIso(), updatedAt: nowIso(), deleted: false }
       ],
       bills: [],
       exportedAt: null

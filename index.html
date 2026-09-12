@@ -3,7 +3,7 @@
 <head data-page-node-id="iYWgkRkd7Ly3Jq7JMeACku">
 <meta charset="UTF-8" data-page-node-id="h4tnUYsFqfGAUQtoLFmuku">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" data-page-node-id="KAuNgC17EDQorjiXmM8RDZ">
-<meta name="theme-color" content="#0B3954" data-page-node-id="3UuON066qkrHjYjhnRZ7T5">
+<meta name="theme-color" content="#0E8079" data-page-node-id="3UuON066qkrHjYjhnRZ7T5">
 <meta name="apple-mobile-web-app-capable" content="yes" data-page-node-id="coVG9YIiYRRWpDRggZX7i3">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" data-page-node-id="jKu3wUvr1oMTYWIElhJ7oK">
 <meta name="apple-mobile-web-app-title" content="EU Trip 2026" data-page-node-id="pElG6BaL4SsMgQ2jEPmu6L">
@@ -15,34 +15,40 @@
 <title>西班牙·法国 11天行程 · 2026.09.26–10.07</title>
 <style>
 :root{
-  --bg:#FAF7F2;--surface:#FFFFFF;--surface-2:#F4EFE8;
-  --text:#1F2937;--text-2:#4B5563;--text-muted:#6B7280;--text-faint:#9CA3AF;
-  --border:#E5E7EB;--border-strong:#D1D5DB;
-  --spain:#C8102E;--spain-bg:#FDE8EB;--spain-soft:#FFF5F7;
-  --france:#0055A4;--france-bg:#E3EEF7;--france-soft:#F0F6FC;
-  --nice:#00A0B0;--nice-bg:#E0F5F7;
-  --paris:#2D3E5F;--paris-bg:#E8EBF0;
-  --accent:#0B3954;--accent-2:#1E5A7E;
-  --warn:#F59E0B;--warn-bg:#FEF3C7;
-  --danger:#DC2626;--danger-bg:#FEE2E2;
-  --success:#10B981;--success-bg:#D1FAE5;
-  --shadow:0 1px 3px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.04);
-  --shadow-lg:0 4px 16px rgba(0,0,0,.08),0 12px 32px rgba(0,0,0,.06);
+  /* 清透蓝绿：主色 teal 取 #0E8079（白字对比度 4.8:1，达 AA），
+     辅色 cyan 稍偏蓝做链接与渐变尾端；底色用极浅青白而非纯白，
+     让卡片有「浮在浅水面上」的层次。 */
+  --bg:#F0FAF9;--surface:#FFFFFF;--surface-2:#E4F3F2;
+  --text:#0E2E2D;--text-2:#3C5C5B;--text-muted:#50756F;--text-faint:#8AA9A6;
+  --border:#D6EAE8;--border-strong:#ADD5D2;
+  /* 国家色保留色相辨识（暖红 / 靛蓝 / 青 / 灰蓝），去掉国旗色的高饱和但压住明度：
+     它们要作为 day-head 渐变底配白字，太浅会让标题读不清。均已过 AA（白字 ≥4.5）。 */
+  --spain:#C0534C;--spain-bg:#FBE9E8;--spain-soft:#FEF6F5;
+  --france:#3E6FA8;--france-bg:#E9F1FA;--france-soft:#F2F7FC;
+  --nice:#12868C;--nice-bg:#E1F2F4;
+  --paris:#55658A;--paris-bg:#ECEFF5;
+  --accent:#0E8079;--accent-2:#0E7490;
+  /* 语义色同样按 AA 取深一档：账本里「应收/应付」是 13px 粗体小字，浅一档就看不清 */
+  --warn:#8F6A10;--warn-bg:#FDF3E4;
+  --danger:#BE4046;--danger-bg:#FBE9E9;
+  --success:#0B7F5E;--success-bg:#D9F5EC;
+  --shadow:0 1px 3px rgba(14,46,45,.05),0 4px 12px rgba(14,46,45,.04);
+  --shadow-lg:0 4px 16px rgba(14,46,45,.08),0 12px 32px rgba(14,46,45,.06);
   --radius:12px;--radius-lg:18px;--t:.2s ease;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#0E131A;--surface:#1A212B;--surface-2:#222B36;
-    --text:#F1F5F9;--text-2:#CBD5E1;--text-muted:#94A3B8;--text-faint:#64748B;
-    --border:#2D3748;--border-strong:#374151;
-    --spain:#FF5470;--spain-bg:#3D1820;--spain-soft:#2A1117;
-    --france:#5BA3E0;--france-bg:#1A2A3D;--france-soft:#131E2B;
-    --nice:#4DD0E1;--nice-bg:#0E2A2E;
-    --paris:#7B8FB3;--paris-bg:#1E2530;
-    --accent:#5BA3D4;--accent-2:#7BBDE3;
-    --warn:#FBBF24;--warn-bg:#3D2E0A;
-    --danger:#F87171;--danger-bg:#3D1818;
-    --success:#34D399;--success-bg:#0E2E1E;
+    --bg:#0B1A1C;--surface:#122226;--surface-2:#182C30;
+    --text:#E6F4F2;--text-2:#B5D4D0;--text-muted:#85AAA6;--text-faint:#5C7C79;
+    --border:#22383C;--border-strong:#2C474C;
+    --spain:#FF7A85;--spain-bg:#3A1E24;--spain-soft:#2A151A;
+    --france:#7FB3E8;--france-bg:#16283C;--france-soft:#111E2C;
+    --nice:#4FD6CB;--nice-bg:#0E2E2C;
+    --paris:#9AAED0;--paris-bg:#1C2531;
+    --accent:#2DD4BF;--accent-2:#5BC8E0;
+    --warn:#FBBF24;--warn-bg:#3A2C0C;
+    --danger:#F87171;--danger-bg:#3A1A1A;
+    --success:#34D399;--success-bg:#0E2E22;
     --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 12px rgba(0,0,0,.3);
     --shadow-lg:0 4px 16px rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.4);
   }
@@ -61,7 +67,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
 /* ===== HERO ===== */
 .hero{
-  background:linear-gradient(135deg,#C8102E 0%,#8B1A2D 35%,#0055A4 100%);
+  background:linear-gradient(135deg,#1FAFA3 0%,#0E8079 48%,#0E7490 100%);
   color:#fff;padding:36px 20px 44px;text-align:center;position:relative;overflow:hidden;
 }
 .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(255,255,255,.08),transparent 50%)}
@@ -439,7 +445,7 @@ footer a{color:var(--text-faint)}
 .qr-card .qr-note{font-size:10px;color:var(--text-muted);margin-top:2px}
 /* 遮罩锁定层 */
 .qr-mask{
-  position:absolute;inset:0;background:rgba(15,23,42,.86);backdrop-filter:blur(3px);
+  position:absolute;inset:0;background:rgba(11,26,28,.86);backdrop-filter:blur(3px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
   color:#fff;cursor:pointer;z-index:2;transition:var(--t);
 }
@@ -583,7 +589,7 @@ footer a{color:var(--text-faint)}
 
 /* ---- 记一笔弹层 ---- */
 .lg-overlay{position:fixed;inset:0;z-index:1200;display:none;align-items:flex-end;justify-content:center;
-  background:rgba(15,23,42,.45);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+  background:rgba(11,26,28,.45);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
 .lg-overlay.show{display:flex}
 .lg-sheet{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--surface);
   border-radius:18px 18px 0 0;box-shadow:var(--shadow-lg);
@@ -724,62 +730,62 @@ footer a{color:var(--text-faint)}
       <text x="120" y="40" text-anchor="middle" font-size="8" fill="var(--text-faint)" font-family="system-ui" data-page-node-id="Tvh3P9pGZtgovgVgFHWH3N">✈ BCN T1 17:40</text>
 
       <!-- D1-D5 巴塞罗那 -->
-      <path d="M 130 200 Q 120 160 130 130 Q 145 100 175 110" class="r-line" stroke="#E76F51" data-page-node-id="mjuLyETLRT1wlXEj3CqQdc"/>
-      <circle cx="175" cy="110" r="7" fill="#E76F51" data-page-node-id="GaAfrGA9dFvmsDFPSiQoNF"/>
+      <path d="M 130 200 Q 120 160 130 130 Q 145 100 175 110" class="r-line" stroke="#3FB8A8" data-page-node-id="mjuLyETLRT1wlXEj3CqQdc"/>
+      <circle cx="175" cy="110" r="7" fill="#3FB8A8" data-page-node-id="GaAfrGA9dFvmsDFPSiQoNF"/>
       <circle cx="175" cy="110" r="3" fill="#fff" data-page-node-id="gKxZQFpNoXVua9z4NWsWxF"/>
       <text x="175" y="92" class="r-city" text-anchor="middle" data-page-node-id="02v3Zv9b8jVxMbmL4h1fsT">巴塞罗那</text>
       <text x="175" y="103" class="r-city-sub" text-anchor="middle" data-page-node-id="vlH2Y2t3WBjtz11c2xwqX2">9.26–9.30 · 4晚</text>
       <!-- D1-D5 每日圆点 -->
       <g data-page-node-id="P4mbbaAOi4PF7Kdf5OGZob">
-        <circle cx="130" cy="200" r="9" fill="#E76F51" data-page-node-id="9F3WsVBSftXBg33qbHjzgF"/>
+        <circle cx="130" cy="200" r="9" fill="#3FB8A8" data-page-node-id="9F3WsVBSftXBg33qbHjzgF"/>
         <text x="130" y="203" class="r-day-label" data-page-node-id="DEkpqXpxSa2YQTZLeSHXOK">D1</text>
-        <circle cx="148" cy="170" r="9" fill="#F4A261" data-page-node-id="qprS1pAgUtdWEoaW4vRhnp"/>
+        <circle cx="148" cy="170" r="9" fill="#5CC3B4" data-page-node-id="qprS1pAgUtdWEoaW4vRhnp"/>
         <text x="148" y="173" class="r-day-label" data-page-node-id="hzWVAYt2Z5qXCtW7Pkn5LR">D2</text>
-        <circle cx="138" cy="135" r="9" fill="#E9C46A" data-page-node-id="2XvfGLve9L4KNylgWhL9aH"/>
+        <circle cx="138" cy="135" r="9" fill="#7FCFC4" data-page-node-id="2XvfGLve9L4KNylgWhL9aH"/>
         <text x="138" y="138" class="r-day-label" data-page-node-id="XkErcYhOOp2FggwWxiT9mH">D3</text>
-        <circle cx="160" cy="125" r="9" fill="#E9C46A" data-page-node-id="C16AHDa8PLqW94hmANHmZF"/>
+        <circle cx="160" cy="125" r="9" fill="#7FCFC4" data-page-node-id="C16AHDa8PLqW94hmANHmZF"/>
         <text x="160" y="128" class="r-day-label" data-page-node-id="xYGMGsZRefoDQLKwYF0Nkw">D4</text>
-        <circle cx="190" cy="130" r="9" fill="#E76F51" data-page-node-id="ekvti9HjhfXnkviwNwTCHy"/>
+        <circle cx="190" cy="130" r="9" fill="#3FB8A8" data-page-node-id="ekvti9HjhfXnkviwNwTCHy"/>
         <text x="190" y="133" class="r-day-label" data-page-node-id="SHuBkWZiEJN80E4fduwg5c">D5</text>
       </g>
       <text x="120" y="218" font-size="9" fill="var(--text-muted)" text-anchor="end" font-family="system-ui" data-page-node-id="HJNmCCpFeiXVy1mFdirt7E">✈ 9/30 20:20 BCN→NCE</text>
 
       <!-- D6-D8 尼斯 + 昂蒂布 -->
-      <path d="M 190 130 Q 280 90 360 105" class="r-line" stroke="#2A9D8F" data-page-node-id="VrKDvK1AHjZ84IndEBOMKk"/>
-      <circle cx="360" cy="105" r="7" fill="#2A9D8F" data-page-node-id="LqBmbVh1lIPh6FWiopT8N8"/>
+      <path d="M 190 130 Q 280 90 360 105" class="r-line" stroke="#0E8079" data-page-node-id="VrKDvK1AHjZ84IndEBOMKk"/>
+      <circle cx="360" cy="105" r="7" fill="#0E8079" data-page-node-id="LqBmbVh1lIPh6FWiopT8N8"/>
       <circle cx="360" cy="105" r="3" fill="#fff" data-page-node-id="Kg9UANwqXEurLyFVWMZvK4"/>
       <text x="360" y="88" class="r-city" text-anchor="middle" data-page-node-id="WSvYlU0J8zdn5u3x8tTcK3">尼斯</text>
       <text x="360" y="99" class="r-city-sub" text-anchor="middle" data-page-node-id="gvx2MxKthsOxec08CuPPZ7">9.30–10.3 · 2晚</text>
       <!-- 昂蒂布支线 -->
-      <path d="M 360 105 Q 380 70 410 60" class="r-line" stroke="#2A9D8F" opacity="0.5" data-page-node-id="ZhTAajyry4XvU1izQT4gJy"/>
-      <circle cx="410" cy="60" r="5" fill="#2A9D8F" opacity="0.7" data-page-node-id="OnApAnANB5Y84CKAPWMfkP"/>
+      <path d="M 360 105 Q 380 70 410 60" class="r-line" stroke="#0E8079" opacity="0.5" data-page-node-id="ZhTAajyry4XvU1izQT4gJy"/>
+      <circle cx="410" cy="60" r="5" fill="#0E8079" opacity="0.7" data-page-node-id="OnApAnANB5Y84CKAPWMfkP"/>
       <text x="410" y="50" class="r-city-sub" text-anchor="middle" data-page-node-id="K6QWU9GluNa2yr7uEIrZJD">昂蒂布</text>
       <!-- D6-D8 -->
       <g data-page-node-id="IKsx3AMYOyoV3GyuoCcGlH">
-        <circle cx="220" cy="115" r="9" fill="#2A9D8F" data-page-node-id="7cEHsiflganwN4xnRAzvVm"/>
+        <circle cx="220" cy="115" r="9" fill="#0E8079" data-page-node-id="7cEHsiflganwN4xnRAzvVm"/>
         <text x="220" y="118" class="r-day-label" data-page-node-id="5oJESAaatkKGH0gzjDMvuz">D6</text>
-        <circle cx="285" cy="102" r="9" fill="#2A9D8F" data-page-node-id="cOV9tGsa7MIRoslcQFEG15"/>
+        <circle cx="285" cy="102" r="9" fill="#0E8079" data-page-node-id="cOV9tGsa7MIRoslcQFEG15"/>
         <text x="285" y="105" class="r-day-label" data-page-node-id="k2PS3afjwX5YQhUnI4ibDr">D7</text>
-        <circle cx="340" cy="100" r="9" fill="#2A9D8F" data-page-node-id="y6dW47UaDSPAbr7A1uZVpY"/>
+        <circle cx="340" cy="100" r="9" fill="#0E8079" data-page-node-id="y6dW47UaDSPAbr7A1uZVpY"/>
         <text x="340" y="103" class="r-day-label" data-page-node-id="n5UkeqCNACaEbADs6ePugn">D8</text>
       </g>
       <text x="290" y="125" font-size="9" fill="var(--text-muted)" text-anchor="middle" font-family="system-ui" data-page-node-id="QEiIHRGymHlHM0Bv8JCwLP">🚄 10/3 07:55 TGV → Paris</text>
 
       <!-- D9-D12 巴黎 -->
-      <path d="M 410 95 Q 510 130 570 90" class="r-line" stroke="#264653" data-page-node-id="QAWUNW9Iz13rbJecG9zWGz"/>
-      <circle cx="570" cy="90" r="7" fill="#264653" data-page-node-id="A2CSOW2Sm5yxhb16Oo6WIK"/>
+      <path d="M 410 95 Q 510 130 570 90" class="r-line" stroke="#175C6B" data-page-node-id="QAWUNW9Iz13rbJecG9zWGz"/>
+      <circle cx="570" cy="90" r="7" fill="#175C6B" data-page-node-id="A2CSOW2Sm5yxhb16Oo6WIK"/>
       <circle cx="570" cy="90" r="3" fill="#fff" data-page-node-id="jobr6Ej0Fkn8n5It9NWNqX"/>
       <text x="570" y="73" class="r-city" text-anchor="middle" data-page-node-id="phogGydnkPR2pyIoNt8DoO">巴黎</text>
       <text x="570" y="84" class="r-city-sub" text-anchor="middle" data-page-node-id="DSm2gWrvmPnQbaIjWQ5MjJ">10.3–10.7 · 4晚</text>
       <!-- D9-D12 -->
       <g data-page-node-id="oQUz1O7nBMGRFSgMj4bo2n">
-        <circle cx="450" cy="115" r="9" fill="#264653" data-page-node-id="2yxSPpqrWOvwi02cpJGfqD"/>
+        <circle cx="450" cy="115" r="9" fill="#175C6B" data-page-node-id="2yxSPpqrWOvwi02cpJGfqD"/>
         <text x="450" y="118" class="r-day-label" data-page-node-id="Hfwm7cMHCYS86MPIYVFPvm">D9</text>
-        <circle cx="495" cy="100" r="9" fill="#264653" data-page-node-id="JhkFQKNuZ4eZsMcRrwOrAV"/>
+        <circle cx="495" cy="100" r="9" fill="#175C6B" data-page-node-id="JhkFQKNuZ4eZsMcRrwOrAV"/>
         <text x="495" y="103" class="r-day-label" data-page-node-id="vuKa4XonRNdzIDHozy4bKD">D10</text>
-        <circle cx="540" cy="92" r="9" fill="#264653" data-page-node-id="92A1BT4tpVpckUnTVLcUww"/>
+        <circle cx="540" cy="92" r="9" fill="#175C6B" data-page-node-id="92A1BT4tpVpckUnTVLcUww"/>
         <text x="540" y="95" class="r-day-label" data-page-node-id="l3RFzIaljDnc6L3lTb75N5">D11</text>
-        <circle cx="600" cy="92" r="9" fill="#2D3E5F" data-page-node-id="l0gIeNjCzKFDj7qdLtO81Q"/>
+        <circle cx="600" cy="92" r="9" fill="#2E5A6B" data-page-node-id="l0gIeNjCzKFDj7qdLtO81Q"/>
         <text x="600" y="95" class="r-day-label" data-page-node-id="AdSZCiGdQSO90HG0JEpvUP">D12</text>
       </g>
       <!-- 返程 -->
@@ -794,9 +800,9 @@ footer a{color:var(--text-faint)}
       <text x="80" y="328" text-anchor="middle" font-size="9" fill="var(--text-faint)" font-family="system-ui" data-page-node-id="RGZqYN8RSUGtc7pU4nCAYi">≈ 1000 km</text>
     </svg>
     <div class="map-legend" data-page-node-id="Fb5hUoK5sN10OKdHk3Na5S">
-      <div class="map-legend-item" data-page-node-id="Y4GBb6StarqmkmVwECEwuX"><span class="map-legend-swatch" style="background:#E76F51" data-page-node-id="A2lulRnizZCGfXXWnsKn1j"></span>巴塞罗那段 (D1-D5)</div>
-      <div class="map-legend-item" data-page-node-id="D9E6Fc0gjSIXSSLy8l8I5E"><span class="map-legend-swatch" style="background:#2A9D8F" data-page-node-id="vWfIKB8FQlGiirO0iMIOri"></span>尼斯+昂蒂布 (D6-D8)</div>
-      <div class="map-legend-item" data-page-node-id="f16K9L5ydVnPVEX2jrCkW2"><span class="map-legend-swatch" style="background:#264653" data-page-node-id="SVL0x3cHsa3DPQOkw7Yyxo"></span>巴黎 (D9-D12)</div>
+      <div class="map-legend-item" data-page-node-id="Y4GBb6StarqmkmVwECEwuX"><span class="map-legend-swatch" style="background:#3FB8A8" data-page-node-id="A2lulRnizZCGfXXWnsKn1j"></span>巴塞罗那段 (D1-D5)</div>
+      <div class="map-legend-item" data-page-node-id="D9E6Fc0gjSIXSSLy8l8I5E"><span class="map-legend-swatch" style="background:#0E8079" data-page-node-id="vWfIKB8FQlGiirO0iMIOri"></span>尼斯+昂蒂布 (D6-D8)</div>
+      <div class="map-legend-item" data-page-node-id="f16K9L5ydVnPVEX2jrCkW2"><span class="map-legend-swatch" style="background:#175C6B" data-page-node-id="SVL0x3cHsa3DPQOkw7Yyxo"></span>巴黎 (D9-D12)</div>
       <div class="map-legend-item" data-page-node-id="F6ZmcFMK2KAEXgL8XAVitM"><span class="map-legend-swatch" style="background:repeating-linear-gradient(90deg,var(--text-faint) 0 3px,transparent 3px 5px)" data-page-node-id="HkzJhhFqncNW4xws57am1s"></span>航班线</div>
     </div>
   </div>
@@ -1015,7 +1021,7 @@ const DAYS = [
   {
     id:'D1', date:'2026-09-26', dateLabel:'9月26日 周六', city:'巴塞罗那', country:'spain',
     subtitle:'抵达巴塞罗那｜酒店旁魔幻喷泉 + La Mercè',
-    color:'#E76F51',
+    color:'#3FB8A8',
     route:['BCN T1','西班牙广场','酒店 (英迪格)','Maria Cristina 舞台'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Aeropuerto+de+Barcelona-El+Prat,+T1&destination=Hotel+Indigo+Barcelona+Plaza+Espana&waypoints=Font+M%C3%A0gica+de+Montju%C3%ACc%7CMaria+Cristina+Avenue',
     events:[
@@ -1030,7 +1036,7 @@ const DAYS = [
   {
     id:'D2', date:'2026-09-27', dateLabel:'9月27日 周日', city:'巴塞罗那', country:'spain',
     subtitle:'La Mercè 闭幕日｜哥特区→人塔→Born→毕加索→城堡烟花',
-    color:'#F4A261',
+    color:'#5CC3B4',
     route:['英迪格酒店','Jaume I 站','哥特区','毕加索馆','Bogatell 海滩'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Hotel+Indigo+Barcelona+Plaza+Espana&destination=Platja+de+Bogatell&wayoptions=travelmode:transit&waypoints=Pla%C3%A7a+de+Sant+Jaume%7CMuseu+Picasso+Barcelona%7CCiutadella+Park',
     events:[
@@ -1050,7 +1056,7 @@ const DAYS = [
   {
     id:'D3', date:'2026-09-28', dateLabel:'9月28日 周一', city:'巴塞罗那', country:'spain',
     subtitle:'高迪 × Domènech 双遗产｜桂尔→圣保罗医院→圣家堂→加泰音乐宫',
-    color:'#E9C46A',
+    color:'#7FCFC4',
     route:['Pestana Arena','Vallcarca 站','桂尔公园','圣保罗医院','圣家堂','音乐宫'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Pestana+Arena+Barcelona&destination=Palau+de+la+M%C3%BAsica+Catalana&travelmode=transit&waypoints=Park+G%C3%BCell%7CRecinte+Modernista+de+Sant+Pau%7CSagrada+Fam%C3%ADlia',
     events:[
@@ -1074,7 +1080,7 @@ const DAYS = [
   {
     id:'D4', date:'2026-09-29', dateLabel:'9月29日 周二', city:'巴塞罗那', country:'spain',
     subtitle:'沙滩 + 蒙特惠奇 单向下山线｜海滩→城堡→花园→MNAC→日落',
-    color:'#E9C46A',
+    color:'#7FCFC4',
     route:['Pestana Arena','Barceloneta 海滩','蒙特惠奇城堡','山地花园','MNAC','Poble-sec'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Pestana+Arena+Barcelona&destination=Poble-sec,+Barcelona&travelmode=transit&waypoints=Castell+de+Montju%C3%AFc%7CMuseu+Nacional+d%27Art+de+Catalunya',
     events:[
@@ -1094,7 +1100,7 @@ const DAYS = [
   {
     id:'D5', date:'2026-09-30', dateLabel:'9月30日 周三', city:'巴塞罗那→尼斯', country:'spain',
     subtitle:'市场 + 老城西侧 + 购物退税 + 飞尼斯',
-    color:'#E76F51',
+    color:'#3FB8A8',
     route:['Pestana Arena','圣卡特琳娜市场','大教堂','Portal de l\'Àngel','兰布拉','BCN T1','尼斯机场民宿'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Pestana+Arena+Barcelona&destination=52+Boulevard+Ren%C3%A9+Cassin,+Nice,+France&travelmode=transit&waypoints=Mercat+de+Santa+Caterina%7CCatedral+de+Barcelona%7CPortal+de+l%27%C3%80ngel%7CLa+Rambla%7CAeropuerto+de+Barcelona-El+Prat+T1',
     events:[
@@ -1117,7 +1123,7 @@ const DAYS = [
   {
     id:'D6', date:'2026-10-01', dateLabel:'10月1日 周四', city:'尼斯', country:'france',
     subtitle:'城堡山 + 老城 + 海上桨板 🌊',
-    color:'#2A9D8F',
+    color:'#0E8079',
     route:['机场民宿','ibis 存包','城堡山','老城','Cours Saleya','Plage Beau Rivage','老港'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=52+Boulevard+Ren%C3%A9+Cassin,+Nice&destination=Le+Safari,+Nice&travelmode=walking&waypoints=Colline+du+Ch%C3%A2teau%7CVieux+Nice%7CPlage+Beau+Rivage',
     events:[
@@ -1133,7 +1139,7 @@ const DAYS = [
   {
     id:'D7', date:'2026-10-02', dateLabel:'10月2日 周五', city:'昂蒂布', country:'france',
     subtitle:'老城人文 + 海岸徒步 + 酒庄品酒 🍷',
-    color:'#2A9D8F',
+    color:'#0E8079',
     route:['ibis','Antibes 老城','港口','Sentier du Littoral','Château de Crémat'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=ibis+Styles+Nice+Vieux+Port&destination=Ch%C3%A2teau+de+Cr%C3%A9mat&travelmode=transit&waypoints=Vieux+Antibes%7CSentier+du+Littoral+Cap+d%27Antibes',
     events:[
@@ -1150,7 +1156,7 @@ const DAYS = [
   {
     id:'D8', date:'2026-10-03', dateLabel:'10月3日 周六', city:'尼斯→巴黎', country:'france',
     subtitle:'上午退房 · 午后 TGV 北上巴黎 🚄',
-    color:'#2A9D8F',
+    color:'#0E8079',
     route:['ibis 酒店','Nice-Ville 站','TGV 6188','Paris Gare de Lyon','3 Rue Lecuirot 公寓','奥赛博物馆'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=ibis+Styles+Nice+Vieux+Port&destination=Mus%C3%A9e+d%27Orsay,+Paris&travelmode=transit&waypoints=Nice-Ville+Station%7CGare+de+Lyon%7C3+Rue+Lecuirot,+75014+Paris',
     events:[
@@ -1176,7 +1182,7 @@ const DAYS = [
   {
     id:'D9', date:'2026-10-04', dateLabel:'10月4日 周日', city:'巴黎', country:'france',
     subtitle:'凡尔赛 + 墓穴 + 西岱岛夜色 🌙',
-    color:'#264653',
+    color:'#175C6B',
     route:['Alésia','St-Michel','RER C','凡尔赛','Catacombes','西岱岛','拉丁区'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Rue+de+la+Huchette,+Paris&travelmode=transit&waypoints=Ch%C3%A2teau+de+Versailles%7CCatacombes+de+Paris%7CNotre-Dame+de+Paris',
     events:[
@@ -1199,7 +1205,7 @@ const DAYS = [
     {
     id:'D10', date:'2026-10-05', dateLabel:'10月5日 周一', city:'巴黎', country:'france',
     subtitle:'歌剧院 + 橘园 + 卢浮宫 🎫',
-    color:'#264653',
+    color:'#175C6B',
     route:['Alésia','Opéra Garnier','橘园','海军府(弹性)','卢浮宫'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Mus%C3%A9e+du+Louvre&travelmode=transit&waypoints=Palais+Garnier%7CMus%C3%A9e+de+l%27Orangerie%7CH%C3%B4tel+de+la+Marine',
     events:[
@@ -1230,7 +1236,7 @@ const DAYS = [
     {
     id:'D11', date:'2026-10-06', dateLabel:'10月6日 周二', city:'巴黎', country:'france',
     subtitle:'卢森堡公园 + 先贤祠 + 蒙马特爱美丽巡礼 🎬',
-    color:'#264653',
+    color:'#175C6B',
     route:['Alésia','卢森堡公园','先贤祠','玛黑区','蒙马特','圣心大教堂'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=Al%C3%A9sia,+Paris&destination=Sacr%C3%A9-C%C5%93ur,+Paris&travelmode=transit&waypoints=Jardin+du+Luxembourg%7CPanth%C3%A9on%7CLe+Marais%7CMontmartre',
     events:[
@@ -1246,7 +1252,7 @@ const DAYS = [
   {
     id:'D12', date:'2026-10-07', dateLabel:'10月7日 周三', city:'巴黎', country:'france',
     subtitle:'RER B 直达机场 · 平安回家 ✈',
-    color:'#2D3E5F',
+    color:'#2E5A6B',
     route:['3 Rue Lecuirot','Alésia M4','St-Michel','RER B','CDG T2C','登机'],
     routeLink:'https://www.google.com/maps/dir/?api=1&origin=3+Rue+Lecuirot,+75014+Paris&destination=Paris+Charles+de+Gaulle+Airport,+Terminal+2C&travelmode=transit&waypoints=Al%C3%A9sia+M4%7CSt-Michel+RER+B',
     events:[

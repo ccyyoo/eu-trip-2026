@@ -15,9 +15,9 @@ def draw(size):
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
 
-    # 渐变背景（左上 #0B3954 → 右下 #1E5A7E）
-    c1 = (11, 57, 84)
-    c2 = (30, 90, 126)
+    # 渐变背景（左上 #1FAFA3 → 右下 #0E7490，与 icon.svg 保持一致）
+    c1 = (31, 175, 163)
+    c2 = (14, 116, 144)
     r = int(size * 0.1875)  # 96/512
     grad = Image.new("RGBA", (size, size))
     gd = ImageDraw.Draw(grad)
