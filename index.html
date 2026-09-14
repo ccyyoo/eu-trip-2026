@@ -650,6 +650,32 @@ footer a{color:var(--text-faint)}
   background:var(--surface);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .lg-mini:active{opacity:.85}
 .lg-mini-danger{color:var(--danger);border-color:var(--danger)}
+.lg-mini.on{color:var(--accent);border-color:var(--accent)}
+
+/* 云同步面板：默认收起，点「☁ 云同步」展开。
+   控件一律 min-height:40px —— 手机上填地址令牌是全键盘活儿，别做得太小。 */
+.lg-cloud{margin-top:12px;background:var(--surface-2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:10px}
+.lg-cloud-h{font-size:12px;font-weight:700;color:var(--text-2)}
+.lg-cloud-p{font-size:11.5px;line-height:1.65;color:var(--text-muted)}
+.lg-cloud-row{display:flex;align-items:center;gap:10px}
+.lg-cloud-row>span{width:52px;flex-shrink:0;font-size:12px;font-weight:600;color:var(--text-2)}
+.lg-cloud-row select,.lg-cloud-row input{flex:1;min-width:0;min-height:40px;padding:0 10px;
+  border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);
+  color:var(--text);font-size:13px;font-family:inherit;-webkit-appearance:none;appearance:none}
+.lg-cloud-row select{background-image:linear-gradient(45deg,transparent 50%,var(--text-muted) 50%),
+  linear-gradient(135deg,var(--text-muted) 50%,transparent 50%);
+  background-position:calc(100% - 16px) 17px,calc(100% - 11px) 17px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
+.lg-cloud-row input{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.lg-cloud-note{font-size:11px;line-height:1.6;color:var(--text-muted)}
+.lg-cloud-note b{color:var(--danger)}
+.lg-cloud-btns{display:flex;flex-wrap:wrap;gap:8px}
+/* iOS Safari 有个老规矩：input 字号小于 16px 时，一聚焦就把整页放大。
+   填地址令牌本来就要看全，放大一次再手动缩回来很烦，所以手机端直接给到 16px。 */
+@media (max-width:768px){
+  .lg-cloud-row input{font-size:16px}
+}
 .lg-btn{min-height:44px;padding:0 18px;border:1px solid var(--border-strong);border-radius:var(--radius);
   background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .lg-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -1945,6 +1971,7 @@ Object.defineProperty(window, 'qrUnlocked', {
 <input type="file" id="lg-file" accept="application/json,.json" hidden>
 
 <script src="app.js"></script>
+<script src="sync.js"></script>
 <script src="ledger.js"></script>
 <script>
 /* 注册离线 Service Worker（仅 https / localhost 生效，GitHub Pages 满足） */

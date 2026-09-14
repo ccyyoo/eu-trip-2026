@@ -14,6 +14,7 @@ var ASSETS = [
   './index.html',
   './app.js',
   './ledger.js',
+  './sync.js',
   './daymap.js',
   './manifest.webmanifest',
   './icon.svg',

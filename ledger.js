@@ -122,6 +122,8 @@
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      // 先落本机再谈上传：断网或云端出错时，本机这份已经安全了
+      scheduleCloud();
       return true;
     } catch (e) {
       toast('本机存储写入失败，请导出备份后清理浏览器空间');
@@ -814,7 +816,11 @@
         '<button type="button" class="lg-mini" data-act="import-json">合并导入</button>' +
         '<button type="button" class="lg-mini" data-act="export-csv">导出 CSV</button>' +
         '<button type="button" class="lg-mini" data-act="rollback">回滚导入</button>' +
-      '</div>';
+        '<button type="button" class="lg-mini" data-act="cloud">' +
+          (cloudOn() ? '☁ 云同步已开' : '☁ 云同步') + '</button>' +
+      '</div>' +
+      '<div id="lg-cloud"></div>';
+    renderCloudPanel();
     updateStatus();
   }
 
@@ -835,7 +841,12 @@
       btn.textContent = '本机保存';
       btn.title = '账目保存在本机浏览器；可导出备份或与他人合并';
     } else {
-      btn.textContent = adapter.label();
+      /* appbar 位置窄，只写「☁ 云同步」，详情放 title 里悬停看 */
+      var st = window.CloudSync ? window.CloudSync.status() : null;
+      btn.textContent = '☁ 云同步';
+      btn.title = (st ? st.label : '云同步') +
+        (st && st.lastAt ? ' · 上次 ' + new Date(st.lastAt).toLocaleString('zh-CN', { hour12: false }) : '') +
+        (st && st.lastError ? ' · 上次失败：' + st.lastError : '');
     }
   }
 
@@ -847,7 +858,9 @@
     toast('本机已保存 ' + bills + ' 笔账目（约 ' + Math.round(bytes / 1024) + ' KB）<br>上次导出：' + esc(last), 6000);
   }
 
-  /* ---------------- 同步适配器（预留，本地版为空实现） ---------------- */
+  /* ---------------- 同步适配器 ----------------
+     本地适配器是默认：没配云端时一切行为与以前完全一致。
+     云端适配器只是把调用转给 sync.js，账本本身不认识任何后端。 */
   var Sync = {
     adapters: {
       local: {
@@ -857,10 +870,147 @@
         flush: function () { return Promise.resolve({ ok: true, mode: 'local' }); },
         label: function () { return '本机保存'; },
         status: function () { return { state: 'local', pending: 0 }; }
+      },
+      cloud: {
+        mode: 'cloud',
+        push: function () { return window.CloudSync ? window.CloudSync.syncNow() : Promise.resolve(); },
+        pull: function () { return window.CloudSync ? window.CloudSync.syncNow() : Promise.resolve(); },
+        flush: function () { return window.CloudSync ? window.CloudSync.syncNow() : Promise.resolve(); },
+        label: function () { return window.CloudSync ? window.CloudSync.status().label : '云同步'; },
+        status: function () { return window.CloudSync ? window.CloudSync.status() : { state: 'local' }; }
       }
     },
-    current: function () { return Sync.adapters.local; }
+    current: function () {
+      if (window.CloudSync && window.CloudSync.status().configured) return Sync.adapters.cloud;
+      return Sync.adapters.local;
+    }
   };
+
+  /* ---------------- 云同步调度 ---------------- */
+  /* inCloudSync 是防递归开关：syncNow 内部会走 mergeObject → save()，
+     如果 save() 又触发一次同步，就会无限套娃。同步期间产生的保存
+     不再排新任务，同步结束后的那一次 render 已经把结果显示出来了。 */
+  var inCloudSync = false;
+  var cloudTimer = null;
+
+  function cloudOn() {
+    return !!(window.CloudSync && window.CloudSync.status().configured);
+  }
+  function scheduleCloud() {
+    if (!cloudOn() || inCloudSync) return;
+    if (cloudTimer) clearTimeout(cloudTimer);
+    // 连着记几笔时合并成一次上传，别每敲一个字就打一次网络
+    cloudTimer = setTimeout(function () {
+      cloudTimer = null;
+      runCloudSync(true);
+    }, 1500);
+  }
+  /* 云同步设置面板：默认收起，点「☁ 云同步」展开。
+     凭据只存本机 localStorage —— 这个仓库是公开的，绝不能写进代码。 */
+  var cloudOpen = false;
+
+  function renderCloudPanel() {
+    var box = $('lg-cloud');
+    if (!box) return;
+    if (!cloudOpen) { box.innerHTML = ''; return; }
+    if (!window.CloudSync) {
+      box.innerHTML = '<div class="lg-cloud"><div class="lg-cloud-h">云同步</div>' +
+        '<div class="lg-cloud-note">同步模块未加载（sync.js 没引到）</div></div>';
+      return;
+    }
+    var c = window.CloudSync.readCfg();
+    var st = window.CloudSync.status();
+    var last = st.lastAt ? new Date(st.lastAt).toLocaleString('zh-CN', { hour12: false }) : '还没同步过';
+    function sel(v) { return c.type === v ? ' selected' : ''; }
+    box.innerHTML =
+      '<div class="lg-cloud">' +
+        '<div class="lg-cloud-h">云同步</div>' +
+        '<div class="lg-cloud-p">账目默认只存在这台设备。两台设备填同一份地址、令牌和房间号，就能自动汇合。</div>' +
+        '<div class="lg-cloud-row"><span>后端</span>' +
+          '<select id="cl-type">' +
+            '<option value="none"' + sel('none') + '>不同步（仅本机）</option>' +
+            '<option value="upstash"' + sel('upstash') + '>Upstash Redis</option>' +
+            '<option value="worker"' + sel('worker') + '>自建端点</option>' +
+          '</select></div>' +
+        '<div class="lg-cloud-row"><span>地址</span>' +
+          '<input id="cl-url" type="text" value="' + esc(c.url) + '" placeholder="https://xxx.upstash.io" spellcheck="false"></div>' +
+        '<div class="lg-cloud-row"><span>令牌</span>' +
+          '<input id="cl-token" type="password" value="' + esc(c.token) + '" placeholder="Upstash token / 自建口令" spellcheck="false"></div>' +
+        '<div class="lg-cloud-row"><span>房间号</span>' +
+          '<input id="cl-room" type="text" value="' + esc(c.room) + '" placeholder="eu2026" spellcheck="false"></div>' +
+        '<div class="lg-cloud-note">上次同步：' + esc(last) +
+          (st.lastError ? '<br><b>上次失败：' + esc(st.lastError) + '</b>' : '') + '</div>' +
+        '<div class="lg-cloud-btns">' +
+          '<button type="button" class="lg-mini" data-cl="save">保存</button>' +
+          '<button type="button" class="lg-mini" data-cl="test">测试连接</button>' +
+          '<button type="button" class="lg-mini" data-cl="now">立即同步</button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function cloudForm() {
+    var g = function (id) { var e = $(id); return e ? e.value.trim() : ''; };
+    return { type: g('cl-type'), url: g('cl-url'), token: g('cl-token'), room: g('cl-room') || 'eu2026' };
+  }
+
+  function cloudAction(kind) {
+    if (!window.CloudSync) { toast('同步模块未加载'); return; }
+    var c = cloudForm();
+    if (kind === 'save') {
+      window.CloudSync.writeCfg(c);
+      toast(c.type === 'none' ? '已关闭云同步，账目只存本机' : '已保存，点「测试连接」确认能不能通');
+      render();
+      cloudOpen = c.type !== 'none';
+      renderCloudPanel();
+      return;
+    }
+    if (kind === 'test') {
+      if (c.type === 'none' || !c.url) { toast('先选后端并填地址'); return; }
+      toast('正在连接…');
+      window.CloudSync.testConnection(c).then(function (r) {
+        if (r.ok) toast('连接成功，可以同步了');
+        else {
+          var why = r.reason || '未知原因';
+          if (r.maybeCors) why += '（多半是对方没给跨域头，换「自建端点」可解）';
+          toast('连不上：' + esc(why), 6000);
+        }
+      });
+      return;
+    }
+    if (kind === 'now') {
+      window.CloudSync.writeCfg(c);
+      runCloudSync(false);
+      return;
+    }
+  }
+
+  function runCloudSync(quiet) {
+    if (!cloudOn() || inCloudSync || !window.CloudSync) return Promise.resolve(null);
+    inCloudSync = true;
+    return window.CloudSync.syncNow().then(function (r) {
+      inCloudSync = false;
+      if (!r) return r;
+      if (r.ok) {
+        if (!quiet) {
+          if (r.seeded) toast('已把本机账本上传到云端');
+          else if (r.added || r.merged) {
+            toast('同步完成：新增 ' + r.added + ' 笔' + (r.merged ? '，更新 ' + r.merged + ' 笔' : ''));
+          } else toast('已是最新');
+        }
+      } else if (!quiet) {
+        var why = r.reason || '未知原因';
+        if (r.maybeCors) why += '（通常是对方没开放跨域，换「自建端点」后端可解）';
+        toast('同步失败：' + esc(why), 6000);
+      }
+      render();
+      updateStatus();
+      return r;
+    }, function (e) {
+      inCloudSync = false;
+      if (!quiet) toast('同步失败：' + esc((e && e.message) || String(e)));
+      return null;
+    });
+  }
 
   /* ---------------- 自测 ---------------- */
   function selfTest() {
@@ -920,6 +1070,7 @@
         if (t.dataset.lgTab) { setTab(t.dataset.lgTab); return; }
         if (t.dataset.edit) { openEdit(t.dataset.edit); return; }
         if (t.dataset.del) { removeBill(t.dataset.del); render(); return; }
+        if (t.dataset.cl) { cloudAction(t.dataset.cl); return; }
         var act = t.dataset.act;
         if (!act) return;
         if (act === 'new') openEntry(window.App ? window.App.state.activeDay : null);
@@ -927,6 +1078,7 @@
         else if (act === 'export-csv') exportCsv();
         else if (act === 'import-json') { var f = $('lg-file'); if (f) f.click(); }
         else if (act === 'rollback') rollbackImport();
+        else if (act === 'cloud') { cloudOpen = !cloudOpen; renderCloudPanel(); }
       });
     }
 
@@ -1018,6 +1170,9 @@
     save();
     bindOnce();
     render();
+    /* 打开页面先拉一次云端：这是「电脑上记完，手机打开就能看到」的那一环。
+       放在 render 之后，合并进来的账能立刻画出来。 */
+    if (cloudOn()) setTimeout(function () { runCloudSync(true); }, 300);
   }
 
   window.Ledger = {
