@@ -830,8 +830,7 @@
         '<button type="button" class="lg-mini" data-act="import-json">合并导入</button>' +
         '<button type="button" class="lg-mini" data-act="export-csv">导出 CSV</button>' +
         '<button type="button" class="lg-mini" data-act="rollback">回滚导入</button>' +
-        '<button type="button" class="lg-mini" data-act="cloud">' +
-          (cloudOn() ? '☁ 云同步已开' : '☁ 云同步') + '</button>' +
+        cloudEntryMarkup() +
       '</div>' +
       '<div id="lg-cloud"></div>';
     renderCloudPanel();
@@ -855,9 +854,12 @@
       btn.textContent = '本机保存';
       btn.title = '账目保存在本机浏览器；可导出备份或与他人合并';
     } else {
-      /* appbar 位置窄，只写「☁ 云同步」，详情放 title 里悬停看 */
+      /* 顶栏位置窄，同步正常时就一个「☁」，不打扰；
+         只有真失败了才把字写出来并标红 —— 平时看不见，出事才露面。 */
       var st = window.CloudSync ? window.CloudSync.status() : null;
-      btn.textContent = '☁ 云同步';
+      var bad = !!(st && st.lastError);
+      btn.textContent = bad ? '☁ 同步失败' : '☁';
+      btn.className = 'appbar-sync' + (bad ? ' is-bad' : '');
       btn.title = (st ? st.label : '云同步') +
         (st && st.lastAt ? ' · 上次 ' + new Date(st.lastAt).toLocaleString('zh-CN', { hour12: false }) : '') +
         (st && st.lastError ? ' · 上次失败：' + st.lastError : '');
@@ -869,7 +871,10 @@
     var bytes = 0;
     try { bytes = (localStorage.getItem(STORE_KEY) || '').length; } catch (e) { bytes = 0; }
     var last = state.exportedAt ? new Date(state.exportedAt).toLocaleString('zh-CN', { hour12: false }) : '还没导出过';
-    toast('本机已保存 ' + bills + ' 笔账目（约 ' + Math.round(bytes / 1024) + ' KB）<br>上次导出：' + esc(last), 6000);
+    var tip = '本机已保存 ' + bills + ' 笔账目（约 ' + Math.round(bytes / 1024) + ' KB）<br>上次导出：' + esc(last);
+    /* 同步入口平时是藏着的，这里留句话，免得哪天自己想改设置却找不到 */
+    if (cloudOn() && !forceCloud) tip += '<br>要改同步设置：网址后面加 ?sync=1';
+    toast(tip, 6000);
   }
 
   /* ---------------- 同步适配器 ----------------
@@ -924,10 +929,31 @@
   var cloudOpen = false;
   var inviteUrl = '';
 
+  /* 云同步入口平时藏起来。
+     一起记账的人不该看见「后端 / 地址 / 令牌」这些框 —— 那是配置，不是功能。
+     只在三种情况露出来：没配过（得让人能配）、上次同步失败了（得让人知道）、
+     或者网址后面手动加了 ?sync=1（自己想改设置时）。 */
+  var forceCloud = /[?&]sync=1(&|$)/.test(location.search || '');
+
+  function cloudEntryVisible() {
+    if (forceCloud) return true;
+    if (!cloudOn()) return true;
+    var st = window.CloudSync ? window.CloudSync.status() : null;
+    return !!(st && st.lastError);
+  }
+
+  function cloudEntryMarkup() {
+    if (!cloudEntryVisible()) return '';
+    var on = cloudOn();
+    return '<button type="button" class="lg-mini' + (on ? ' lg-mini-danger' : '') + '" data-act="cloud">' +
+      (on ? '☁ 同步失败' : '☁ 云同步') + '</button>';
+  }
+
   function renderCloudPanel() {
     var box = $('lg-cloud');
     if (!box) return;
-    if (!cloudOpen) { box.innerHTML = ''; return; }
+    /* 入口藏起来时面板也必须跟着收，否则会留下一个关不掉的设置区 */
+    if (!cloudOpen || !cloudEntryVisible()) { cloudOpen = false; box.innerHTML = ''; return; }
     if (!window.CloudSync) {
       box.innerHTML = '<div class="lg-cloud"><div class="lg-cloud-h">云同步</div>' +
         '<div class="lg-cloud-note">同步模块未加载（sync.js 没引到）</div></div>';
@@ -1259,10 +1285,9 @@
   function init() {
     save();
     bindOnce();
-    /* 从邀请链接进来的：配置已经写好了，直接摊开面板告诉他一声，
-       别让人对着空账本以为没连上。 */
+    /* 从邀请链接进来的：配置已经写好了，只提示一声，别摊开设置面板 ——
+       地址、令牌这些是配置不是功能，同伴不该看见，看见只会以为哪里要他操作。 */
     var joined = window.CloudSync && window.CloudSync.joinedFromInvite;
-    if (joined) cloudOpen = true;
     render();
     if (joined) toast('已加入共享账本，正在拉取同伴的账目…', 4000);
     /* 打开页面先拉一次云端：这是「电脑上记完，手机打开就能看到」的那一环。

@@ -420,6 +420,8 @@ footer a{color:var(--text-faint)}
     background:var(--surface-2);font-size:11px;font-weight:600;color:var(--text-2);
     display:flex;align-items:center;gap:4px;flex-shrink:0;
   }
+  /* 平时同步是隐形的，只有同步真的断了才需要顶栏这个小字变红提醒 */
+  .appbar-sync.is-bad{color:var(--danger);border-color:var(--danger)}
   .datebar{
     display:flex;gap:8px;overflow-x:auto;
     padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);
