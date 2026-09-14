@@ -991,7 +991,8 @@
     return '<div class="lg-cloud-h">分摊成员（点一下改名）</div>' +
       '<div class="lg-members">' + rows + '</div>' +
       '<div class="lg-cloud-note">默认只给代号，不写真实姓名 —— 账本要在两台手机间传，' +
-        '也可能会截图外发。改成你们自己的昵称即可，改名会同步给同伴。</div>';
+        '也可能会截图外发。各改各的那一位就行（你改 A、同伴改 B），' +
+        '别两人改同一个，会互相覆盖。改名会同步给同伴。</div>';
   }
 
   function renameMember(id) {
