@@ -26,8 +26,15 @@
   --spain:#C0534C;--spain-bg:#FBE9E8;--spain-soft:#FEF6F5;
   --france:#3E6FA8;--france-bg:#E9F1FA;--france-soft:#F2F7FC;
   --nice:#12868C;--nice-bg:#E1F2F4;
-  /* 每日地图的陆/海底色。陆比画布略亮、海比陆更冷更深，才有「地在水边」的层次 */
-  --dm-land:#FFFFFF;--dm-sea:#D9EDF0;
+  /* 每日地图：手绘纸感配色（G 方案）。
+     陆=米黄纸，海=雾蓝绿；纸色系变量同时供地标贴纸 / 套管 / 标签使用，
+     换肤只改这一处。深色模式在下面单独给一套，不做反色 —— 反色会变脏。 */
+  --dm-land:#FDF8EC;--dm-sea:#CFE2E1;
+  --dm-sea-blur1:#C9E0DF;--dm-sea-blur2:#B9D6D6;
+  --dm-paper:#FFFDF6;--dm-paper-2:#FBF5E9;      /* 贴纸底 / 套管与标签描边 */
+  --dm-ink:#3A3126;--dm-ink-2:#6B5F4B;          /* 标签字 / 车次胶囊字 */
+  --dm-edge:#C9BFA6;                            /* 贴纸外圈、胶囊描边 */
+  --dm-coast-c:#3B5B58;--dm-river-c:#A9CBD1;--dm-road-c:#D8CFB6;
   --paris:#55658A;--paris-bg:#ECEFF5;
   --accent:#0E8079;--accent-2:#0E7490;
   /* 语义色同样按 AA 取深一档：账本里「应收/应付」是 13px 粗体小字，浅一档就看不清 */
@@ -46,7 +53,14 @@
     --spain:#FF7A85;--spain-bg:#3A1E24;--spain-soft:#2A151A;
     --france:#7FB3E8;--france-bg:#16283C;--france-soft:#111E2C;
     --nice:#4FD6CB;--nice-bg:#0E2E2C;
-    --dm-land:#122226;--dm-sea:#0A1C20;
+    /* 深色不是把米黄反色，而是换成「深墨纸」：底色压暗但保留暖调，
+       纸片与标签仍比底亮一档，层次关系与浅色一致 */
+    --dm-land:#16211F;--dm-sea:#0B1E22;
+    --dm-sea-blur1:#12333A;--dm-sea-blur2:#0E2A31;
+    --dm-paper:#1F2C29;--dm-paper-2:#1A2623;
+    --dm-ink:#EDE7D8;--dm-ink-2:#A6B2AC;
+    --dm-edge:#3A4A46;
+    --dm-coast-c:#6FA79F;--dm-river-c:#2C4A50;--dm-road-c:#33423C;
     --paris:#9AAED0;--paris-bg:#1C2531;
     --accent:#2DD4BF;--accent-2:#5BC8E0;
     --warn:#FBBF24;--warn-bg:#3A2C0C;
@@ -180,45 +194,68 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .day-route-cities{color:var(--text-muted);font-size:10px;margin-top:4px}
 
 /* ===== 每日地图（见 daymap.js） =====
-   配色全部走主题变量，深浅色模式自动跟随；水/岸/路用同一套蓝绿家族降饱和处理，
-   保证它们永远比当天的路线色（--accent 一档的实色）更轻，不会抢视觉。 */
+   两套语言分工：底图手绘纸感管「地理方位」，路线层地铁语法管「先后顺序」。
+   配色全部走变量，深浅色模式自动跟随；除当天的路线色（--accent 一档的实色）
+   之外，底图上的一切都比它更轻，不会抢视觉。 */
 .day-map{margin:9px 0 2px}
 .day-map-canvas{
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  background:var(--dm-land);border:1px solid var(--dm-edge);border-radius:var(--radius);overflow:hidden;
   /* 宽屏下 SVG 会被拉到与卡片同宽，实测高 607px，一屏装不下两天。
      限到 460px 后高度约 390px，和手机上的观感一致；手机上容器本来就窄，不受影响。 */
   max-width:460px;
 }
 .dm-svg{width:100%;height:auto;display:block}
-/* 底图：先铺一条粗的浅蓝做出水面层次，再压细线勾岸 */
+/* 纸纹：铺在底图墨线之上、路线层之下。物理上纸纹本该在墨下面，
+   但那样会被海陆实色盖掉；压在底图上、让路线层再盖上去，
+   既看得到颗粒又不糊住要读的字。深色下 multiply 会把画面压死，改成 screen。 */
+.dm-grain{mix-blend-mode:multiply;opacity:.12;pointer-events:none}
+@media (prefers-color-scheme: dark){ .dm-grain{mix-blend-mode:screen;opacity:.05} }
+/* 底图：陆=米黄纸，海=雾蓝绿并叠两层模糊做出晕开的水彩边 */
 .dm-land{fill:var(--dm-land)}
-.dm-sea{fill:var(--dm-sea)}
-.dm-coast{fill:none;stroke:var(--accent-2);stroke-width:1.4;opacity:.55}
-.dm-river{fill:none;stroke:var(--border-strong);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
-.dm-island{fill:var(--surface);stroke:var(--border-strong);stroke-width:.8}
-.dm-hill{fill:var(--surface-2);stroke:var(--border-strong);stroke-width:.8}
-.dm-road{fill:none;stroke:var(--border-strong);stroke-width:1.4;stroke-linecap:round;opacity:.85}
-.dm-rail{fill:none;stroke:var(--text-faint);stroke-width:1;stroke-dasharray:6 4;opacity:.65}
-.dm-ring{fill:none;stroke:var(--border-strong);stroke-width:1;stroke-dasharray:4 4;opacity:.9}
-.dm-border{fill:none;stroke:var(--text-faint);stroke-width:1;stroke-dasharray:5 4;opacity:.5}
-.dm-city{fill:var(--surface);stroke:var(--text-faint);stroke-width:1.2}
-.dm-city-t{font-size:15px;fill:var(--text-faint);font-family:system-ui,-apple-system,sans-serif}
-.dm-note{font-size:16px;fill:var(--text-faint);font-family:system-ui,-apple-system,sans-serif;font-style:italic;opacity:.9}
-/* 当天路线 */
-.dm-leg{stroke-width:3.5;stroke-linecap:round;opacity:.95}
-.dm-leg-far{stroke-dasharray:9 7;opacity:.5}
-.dm-fly{font-size:20px;fill:var(--text-2);font-family:system-ui,-apple-system,sans-serif}
-.dm-chip rect{fill:var(--surface);stroke:var(--border);stroke-width:1}
-.dm-chip text{font-size:16px;fill:var(--text-2);font-family:system-ui,-apple-system,sans-serif;font-weight:600}
-/* 节点 */
-.dm-node text{font-family:system-ui,-apple-system,sans-serif}
-.dm-hit{fill:transparent}
-/* 标签描一层底色，压在路线和底图上也读得清 */
+.dm-sea{fill:var(--dm-sea);opacity:.9}
+.dm-sea-blur1{fill:var(--dm-sea-blur1);opacity:.6}
+.dm-sea-blur2{fill:var(--dm-sea-blur2);opacity:.5}
+.dm-coast{fill:none;stroke:var(--dm-coast-c);stroke-width:1.8;opacity:.8;filter:url(#dm-rough)}
+.dm-river{fill:none;stroke:var(--dm-river-c);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.dm-island{fill:var(--dm-paper);stroke:var(--dm-edge);stroke-width:.8}
+.dm-hill{fill:var(--dm-paper-2);stroke:var(--dm-edge);stroke-width:.8}
+/* 关键减法：道路留一点痕迹提示「这儿有路网」，铁路和环线直接隐身。
+   手绘碎线会和地铁折线互抢，底图让位之后路线才读得出来。 */
+.dm-road{fill:none;stroke:var(--dm-road-c);stroke-width:2;stroke-linecap:round;opacity:.5}
+.dm-rail{opacity:0}
+.dm-ring{opacity:0}
+.dm-border{fill:none;stroke:var(--text-faint);stroke-width:1;stroke-dasharray:5 4;opacity:.32}
+.dm-city{fill:var(--dm-ink-2);opacity:.65}
+.dm-city-t{font-size:14px;fill:var(--dm-ink-2);opacity:.7;font-family:system-ui,-apple-system,sans-serif;letter-spacing:.4px}
+.dm-note{font-size:15px;fill:var(--dm-ink-2);font-family:system-ui,-apple-system,sans-serif;font-style:italic;opacity:.65}
+
+/* ===== 路线层：地铁线路图语法 =====
+   主管「先后顺序」：45° 折线 + 纸色套管 + 车站 + 全站标签。
+   线和图标所在的 .dm-rough 整组套了抖动滤镜（#dm-rough-s），手绘味从这里来；
+   编号与地名在 .dm-ink 里不加滤镜 —— 抖过小字会糊。 */
+.dm-mc{fill:none;stroke:var(--dm-paper-2);stroke-linejoin:round;stroke-linecap:round}
+.dm-ml{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dm-ml-far{stroke-dasharray:11 8;opacity:.72}
+/* 普通车站：纸色底 + 当天色环 */
+.dm-ms{fill:var(--dm-paper);stroke-width:3.6}
+.dm-mno{font-size:13px;font-weight:700;font-family:-apple-system,"PingFang SC",sans-serif}
+/* 地标贴纸：纸片 + 手绘图标 + 右下角编号徽章 */
+.dm-lmb{fill:var(--dm-paper);stroke:var(--dm-edge);stroke-width:1.2}
+.dm-ico{fill:none;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round}
+.dm-bdg{stroke:var(--dm-paper-2);stroke-width:2.4}
+.dm-bdgn{font-size:9.6px;font-weight:700;fill:#fff;font-family:-apple-system,"PingFang SC",sans-serif}
+/* 车次胶囊（TGV / RER）*/
+.dm-mchip rect{fill:var(--dm-paper);stroke:var(--dm-edge);stroke-width:1}
+.dm-mchip text{font-size:15px;font-weight:600;fill:var(--dm-ink-2);font-family:-apple-system,"PingFang SC",sans-serif}
+.dm-fly{font-size:20px;fill:var(--dm-ink-2);font-family:system-ui,-apple-system,sans-serif}
+/* 地名：西文走手写体、中文走系统手写体，实在没有就落回苹方。
+   描一层纸色底，压在路线和底图上也读得清。 */
 .dm-lbl{
-  font-size:20px;font-weight:700;fill:var(--text);font-family:system-ui,-apple-system,sans-serif;
-  stroke:var(--surface);stroke-width:5;paint-order:stroke;stroke-linejoin:round;
+  font-size:17px;font-weight:700;fill:var(--dm-ink);
+  font-family:"Bradley Hand","Hanzipen SC","Xingkai SC",-apple-system,"PingFang SC",sans-serif;
+  stroke:var(--dm-paper-2);stroke-width:5;paint-order:stroke;stroke-linejoin:round;
 }
-.dm-num{font-size:16px;font-weight:700;fill:#fff}
+.dm-hit{fill:transparent}
 /* 地图下方清单：编号与圆点一一对应，点击直达该地点 */
 .day-map-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
 .dm-item{
@@ -226,6 +263,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   background:var(--surface);border:1px solid var(--border);border-radius:20px;
   font-size:12px;color:var(--text-2);text-decoration:none;
 }
+.dm-item.is-lm{border-color:var(--dm-edge);background:var(--dm-paper)}
 .dm-item:active{opacity:.6}
 .dm-item-n{
   width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;

@@ -13,6 +13,13 @@
  *    ✈；route 里显式写了车次的（TGV 6188 / RER C / RER B）按 rail 处理。
  * 4. 住宿点坐标取酒店官网或官方旅游局公布的 GPS，地标取公开常用坐标，
  *    精度足够支撑「相对位置」判断，不追求米级准确。
+ * 5. 视觉上是两套语言分工（G 方案）：底图继续手绘纸感，负责「这是本旅行手册、
+ *    地理方位可信」；路线层换成地铁线路图语法（45° 折线 + 纸色套管 + 车站 +
+ *    全站标签），负责「先后顺序一眼看懂」。关键的减法在底图：道路/铁路/环线
+ *    在 CSS 里压到近乎隐身，否则手绘碎线会和地铁折线互抢。
+ * 6. 著名景点（圣家堂、卢浮宫、凡尔赛…）用 48 网格的纯描边手绘图标表示，
+ *    配一张纸色圆片和右下角的编号徽章；酒店 / 民宿 / 地铁站一律保持普通车站，
+ *    全画成图标就没有层次了。
  */
 (function () {
   'use strict';
@@ -117,14 +124,18 @@
         [2.15, 41.37]
       ],
       border: [[3.16, 42.44], [2.60, 42.60], [1.80, 42.75], [1.00, 42.85], [0.20, 42.90]],
-      river: [
+      /* river / rail 是「线的数组」——每条线本身还是点数组，所以这里要套两层。
+         macro 原本写成单层点数组，渲染时 linePath 会拿到数字而不是 [lon,lat]，
+         算出全 NaN 的路径被浏览器静默丢掉：跨城日（D5/D8）的罗讷河和铁路
+         其实一直没画出来。 */
+      river: [[
         [4.835, 45.764], [4.80, 45.30], [4.72, 44.80], [4.63, 44.30], [4.62, 43.90],
         [4.68, 43.70], [4.63, 43.45], [4.75, 43.30], [4.85, 43.35], [4.90, 43.40]
-      ],
-      rail: [
+      ]],
+      rail: [[
         [7.270, 43.703], [7.02, 43.55], [6.50, 43.35], [5.93, 43.12], [5.37, 43.30],
         [4.90, 43.60], [4.83, 45.76], [3.90, 47.30], [2.352, 48.857]
-      ],
+      ]],
       cities: [
         [2.152, 41.389, 'Barcelona'], [7.270, 43.703, 'Nice'], [2.352, 48.857, 'Paris'],
         [5.370, 43.296, 'Marseille'], [4.835, 45.764, 'Lyon'], [3.878, 43.611, 'Montpellier']
@@ -225,6 +236,270 @@
   var KM_LAT = 110.574;   // 1 纬度 ≈ 公里
   var KM_LON = 111.320;   // 1 经度 ≈ 公里（赤道）
   var LONG_HAUL_KM = 80;  // 超过这个距离视为长途交通段
+
+  /* =============================================================
+     手绘地标图标（48×48 网格 · 纯描边）
+     -------------------------------------------------------------
+     设计取舍：图标本身画得规整，「手绘感」交给 SVG 的 feDisplacementMap
+     做轻微抖动 —— 路线层整组套 #dm-rough-s，线和图标拿到的是同一种抖动。
+     直接手写出歪扭的路径既难维护，缩小后也只会糊成一团；而滤镜的位移量
+     是跟着坐标系一起缩的，观感才稳。
+     描边宽度统一由 CSS 的 .dm-ico 给，不在这里写死。
+     ============================================================= */
+  var ICO = {
+    /* 圣家堂：四座高低错落的尖塔 */
+    sagradafamilia:
+      '<path d="M11 40L14 20l3 20z"/><path d="M18 40L21 15l3 25z"/>' +
+      '<path d="M25 40L28 13l3 27z"/><path d="M32 40L35 24l3 16z"/>' +
+      '<path d="M21 15v-4M19 12h4"/><path d="M28 13v-4M26 10h4"/>' +
+      '<path d="M8 40h32"/><path d="M12 34h24"/><path d="M21 40v-6a3 3 0 0 1 6 0v6"/>',
+
+    /* 桂尔公园：波浪长椅 + 小太阳 */
+    parkguell:
+      '<path d="M7 33q5.5-7 11 0t11 0t11 0"/><path d="M7 33q5.5 7 11 0t11 0t11 0"/>' +
+      '<path d="M12 38v4M24 40v3M36 38v4"/>' +
+      '<circle cx="36" cy="12" r="4"/><path d="M36 5v2M36 17v2M30 12h-2M42 12h2"/>',
+
+    /* 加泰音乐宫：拱形立面 + 玫瑰窗 */
+    palau:
+      '<path d="M9 40V26a15 15 0 0 1 30 0v14"/><path d="M16 40V28M24 40V26M32 40V28"/>' +
+      '<circle cx="24" cy="18" r="4.5"/><path d="M6 40h36"/>',
+
+    /* 圣保罗医院：穹顶 + 十字 + 拱廊 */
+    santpau:
+      '<path d="M14 21a10 10 0 0 1 20 0"/><path d="M17 21h14v5H17z"/>' +
+      '<path d="M24 10V6M21 8h6"/><path d="M9 40V26h30v14"/>' +
+      '<path d="M14 40v-7a3.5 3.5 0 0 1 7 0v7"/><path d="M27 40v-7a3.5 3.5 0 0 1 7 0v7"/>' +
+      '<path d="M6 40h36"/>',
+
+    /* 卢浮宫：玻璃金字塔 */
+    louvre:
+      '<path d="M24 8L40 38H8z"/><path d="M24 8v30"/>' +
+      '<path d="M16 23h16"/><path d="M12 31h24"/><path d="M5 38h38"/>',
+
+    /* 奥赛博物馆：火车站大钟 */
+    orsay:
+      '<path d="M8 40V28a16 16 0 0 1 32 0v12"/>' +
+      '<circle cx="24" cy="22" r="6"/><path d="M24 22v-4M24 22l3.5 2"/>' +
+      '<path d="M14 40v-8a3 3 0 0 1 6 0v8"/><path d="M28 40v-8a3 3 0 0 1 6 0v8"/>' +
+      '<path d="M5 40h38"/>',
+
+    /* 凡尔赛：宫殿立面 + 烟囱 */
+    versailles:
+      '<path d="M6 26l4-7h28l4 7"/><path d="M10 26v14h28V26"/>' +
+      '<path d="M15 40v-8a3.5 3.5 0 0 1 7 0v8"/><path d="M26 40v-8a3.5 3.5 0 0 1 7 0v8"/>' +
+      '<path d="M14 19v-4h3v4M31 19v-4h3v4"/><path d="M5 40h38"/>',
+
+    /* 加尼叶歌剧院：圆顶 + 三联拱 */
+    opera:
+      '<path d="M24 13a9 9 0 0 1 9 9h-18a9 9 0 0 1 9-9"/>' +
+      '<path d="M8 40V22h32v18"/>' +
+      '<path d="M13 40v-9a3.5 3.5 0 0 1 7 0v9"/><path d="M20.5 40v-9a3.5 3.5 0 0 1 7 0v9"/>' +
+      '<path d="M28 40v-9a3.5 3.5 0 0 1 7 0v9"/>' +
+      '<path d="M24 13V8M21 10h6"/><path d="M5 40h38"/>',
+
+    /* 橘园：圆形展厅 + 睡莲 */
+    orangerie:
+      '<circle cx="24" cy="22" r="11"/><path d="M13 33v7M35 33v7M13 33h22"/>' +
+      '<path d="M17 28q3.5-4 7 0"/><path d="M24 28q3.5-4 7 0"/>' +
+      '<path d="M24 11V7"/><path d="M6 40h36"/>',
+
+    /* 先贤祠：穹顶 + 柱廊 */
+    pantheon:
+      '<path d="M13 20a11 11 0 0 1 22 0"/><path d="M15 20h18v5H15z"/>' +
+      '<path d="M8 26h32"/><path d="M12 40V26M18 40V26M24 40V26M30 40V26M36 40V26"/>' +
+      '<path d="M24 9V5M21 7h6"/><path d="M5 40h38"/>',
+
+    /* 圣心堂：洋葱穹顶 + 拱门 */
+    sacrecoeur:
+      '<path d="M24 12a10 10 0 0 1 10 10H14a10 10 0 0 1 10-10"/>' +
+      '<path d="M24 12V7M20 9h8"/><path d="M9 40V26h30v14"/>' +
+      '<path d="M13 40v-8a3 3 0 0 1 6 0v8"/><path d="M21 40v-8a3 3 0 0 1 6 0v8"/>' +
+      '<path d="M29 40v-8a3 3 0 0 1 6 0v8"/><path d="M5 40h38"/>',
+
+    /* 地下墓穴：拱门 + 头骨（眼睛用短笔画，保持全图纯描边） */
+    catacombes:
+      '<path d="M9 40V33a15 15 0 0 1 30 0v7"/><path d="M17 40V36a7 7 0 0 1 14 0v4"/>' +
+      '<path d="M24 19a5 5 0 0 1 5 5v3h-10v-3a5 5 0 0 1 5-5z"/>' +
+      '<path d="M21.6 22.4v1.7M26.4 22.4v1.7"/><path d="M22 27h4"/><path d="M5 40h38"/>',
+
+    /* 通用 · 教堂（哥特区 / 大教堂 / 西岱岛） */
+    church:
+      '<path d="M24 7V4M21 5.5h6"/><path d="M24 9L37 24H11z"/>' +
+      '<path d="M15 24v16h18V24"/><path d="M21 40v-9a3.5 3.5 0 0 1 6 0v9"/>' +
+      '<path d="M18 28v4M30 28v4"/><path d="M6 40h36"/>',
+
+    /* 通用 · 城堡（蒙特惠奇 / 城堡山 / Antibes / Crémat） */
+    castle:
+      '<path d="M10 40V20h4v-5h4v5h4v-6h4v6h4v-5h4v5h4v20z"/>' +
+      '<path d="M21 40v-8a3 3 0 0 1 6 0v8"/><path d="M6 40h36"/>',
+
+    /* 通用 · 海滩 */
+    beach:
+      '<path d="M11 23Q24 7 37 23"/><path d="M37 23q-3.25 3-6.5 0t-6.5 0t-6.5 0t-6.5 0"/>' +
+      '<path d="M24 23v13"/><path d="M8 38q4-4 8 0t8 0t8 0"/>',
+
+    /* 通用 · 市集（圣卡特琳娜 / Cours Saleya / Portal de l'Àngel） */
+    market:
+      '<path d="M8 18h32l-4 7H12z"/><path d="M16 18v7M24 18v7M32 18v7"/>' +
+      '<path d="M12 25v13M36 25v13"/>' +
+      '<path d="M17 31h6v6h-6z"/><path d="M25 31h6v6h-6z"/><path d="M6 40h36"/>',
+
+    /* 通用 · 港口（锚） */
+    port:
+      '<circle cx="24" cy="13" r="4"/><path d="M24 17v20"/><path d="M16 25h16"/>' +
+      '<path d="M11 30q13 12 26 0"/><path d="M8 27l5 3-5 3"/><path d="M40 27l-5 3 5 3"/>',
+
+    /* 通用 · 公园 / 林荫（两棵树） */
+    park:
+      '<circle cx="19" cy="21" r="8"/><path d="M19 29v11"/>' +
+      '<circle cx="32" cy="28" r="5.5"/><path d="M32 33v7"/><path d="M6 40h36"/>',
+
+    /* 通用 · 山丘（蒙马特 / 海岸小径） */
+    hill:
+      '<path d="M6 40l12-17 8 11 5-7 11 13z"/><circle cx="34" cy="13" r="4"/><path d="M5 40h38"/>',
+
+    /* 通用 · 老城屋顶（老城 / 玛黑 / 拉丁区） */
+    town:
+      '<path d="M7 40V31l6-6 6 6v9"/><path d="M18 40V26l7-7 7 7v14"/>' +
+      '<path d="M31 40V33l5-5 5 5v7"/>' +
+      '<path d="M11 34h4v4h-4z"/><path d="M22 30h4v4h-4z"/><path d="M5 40h38"/>',
+
+    /* 通用 · 宫殿（MNAC / 海军府 / 毕加索馆） */
+    palace:
+      '<path d="M8 40V25h32v15"/><path d="M4 25L24 12l20 13"/>' +
+      '<path d="M14 40V29M20 40V29M28 40V29M34 40V29"/><path d="M6 40h36"/>',
+
+    /* 魔幻喷泉（Maria Cristina 舞台） */
+    fountain:
+      '<path d="M24 8v8"/><path d="M13 24q11-8 22 0"/><path d="M9 32q15 10 30 0"/>' +
+      '<path d="M16 20l-4-5M32 20l4-5"/><path d="M18 36q6 4 12 0"/><path d="M6 40h36"/>',
+
+    /* 威尼斯双塔（西班牙广场） */
+    torres:
+      '<path d="M11 40V18l3-5 3 5v22"/><path d="M31 40V18l3-5 3 5v22"/>' +
+      '<path d="M11 24h6M31 24h6"/><path d="M24 40v-6"/><path d="M18 34q6 5 12 0"/>' +
+      '<path d="M6 40h36"/>',
+
+    /* 机场（BCN T1 / CDG T2C） */
+    plane:
+      '<path d="M24 6a2.5 2.5 0 0 1 2.5 2.5V15l11.5 6v3.5L26 21.5v5l4 3v3l-6-2-6 2v-3l4-3v-5L10.5 24.5V21l11.5-6V8.5A2.5 2.5 0 0 1 24 6z"/>'
+  };
+
+  /* ---------- 地点 → 图标 ----------
+   * 只有「值得认出来」的地点给图标；酒店 / 民宿 / 公寓 / 地铁站一律保持
+   * 普通编号圆点 —— 全画上图会失去层次，图标也就白给了。
+   */
+  var LANDMARK = {
+    // 巴塞罗那
+    'BCN T1': ICO.plane,
+    '西班牙广场': ICO.torres,
+    'Maria Cristina 舞台': ICO.fountain,
+    '哥特区': ICO.church,
+    '毕加索馆': ICO.palace,
+    '大教堂': ICO.church,
+    'Bogatell 海滩': ICO.beach,
+    'Barceloneta 海滩': ICO.beach,
+    '圣卡特琳娜市场': ICO.market,
+    "Portal de l'Àngel": ICO.market,
+    '兰布拉': ICO.park,
+    '桂尔公园': ICO.parkguell,
+    '圣保罗医院': ICO.santpau,
+    '圣家堂': ICO.sagradafamilia,
+    '音乐宫': ICO.palau,
+    '蒙特惠奇城堡': ICO.castle,
+    '山地花园': ICO.park,
+    'MNAC': ICO.palace,
+    // 尼斯 / 昂蒂布
+    '老城': ICO.town,
+    'Cours Saleya': ICO.market,
+    'Plage Beau Rivage': ICO.beach,
+    '老港': ICO.port,
+    '港口': ICO.port,
+    '城堡山': ICO.castle,
+    'Antibes 老城': ICO.town,
+    'Sentier du Littoral': ICO.hill,
+    'Château de Crémat': ICO.castle,
+    // 巴黎
+    '奥赛博物馆': ICO.orsay,
+    '凡尔赛': ICO.versailles,
+    'Catacombes': ICO.catacombes,
+    '西岱岛': ICO.church,
+    '拉丁区': ICO.town,
+    'Opéra Garnier': ICO.opera,
+    '橘园': ICO.orangerie,
+    '海军府(弹性)': ICO.palace,
+    '卢浮宫': ICO.louvre,
+    '卢森堡公园': ICO.park,
+    '先贤祠': ICO.pantheon,
+    '玛黑区': ICO.town,
+    '蒙马特': ICO.hill,
+    '圣心大教堂': ICO.sacrecoeur,
+    'CDG T2C': ICO.plane
+  };
+
+  /* ---------- 路线层参数（G 方案：手绘底图 × 地铁线路语法） ----------
+   * 颜色一律走 CSS 变量（见 index.html 的 .dm-* 规则），这里只放尺寸。
+   * 这样深色模式换一套变量就够了，JS 不用分叉。
+   */
+  var OPTS = {
+    casingW: 15, casingFarW: 12,     // 纸色套管：让线在花底图上也能读清
+    lineW: 6.5, lineFarW: 3.6,       // 主线 / 长途段
+    stationR: 11.5,                  // 普通车站半径
+    lmR: 16,                         // 地标纸片半径
+    badgeR: 7.6, badgeOff: 13,       // 地标右下角的编号徽章
+    icoScale: 0.64,                  // 48 网格缩到 30.7 单位
+    labelSize: 17, cjkW: 16, latinW: 8.6,
+    labelGap: 13,                    // 标签离节点边缘的距离
+    /* 摊开重叠点时两个节点之间额外留的空隙。设 12 不是审美选择：热区半径取
+       「到最近邻距离的一半」，普通点对 = 12.5+12.5+12 = 37，热区 r≈18.5；
+       手机上卡片内容宽约 350px 对 viewBox 440，缩放 0.8，得 30px 直径。
+       再往上加会让点飘离真实位置太远、标签也更难放。 */
+    spreadGap: 12
+  };
+
+  /* 全站标签开关：true = 每个点都写地名；false = 只写起点和终点。
+     某天太挤时，可以在 DAYS 里给那一天加 mapLabels:'ends' 单独切回。 */
+  var ALL_LABELS = true;
+
+  /* ---------- 全局滤镜 ----------
+   * 12 张图共用一份 defs：用一个 0 尺寸的隐藏 SVG 挂在 body 上，
+   * 各图用 url(#id) 引用。每图各写一份会重复 12 次 id，没必要。
+   */
+  var NS = 'http://www.w3.org/2000/svg';
+  var DEFILTERS =
+    '<defs>' +
+    '<filter id="dm-rough" x="-20%" y="-20%" width="140%" height="140%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="7" result="n"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/>' +
+    '</filter>' +
+    '<filter id="dm-rough-s" x="-20%" y="-20%" width="140%" height="140%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="11" result="n2"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="n2" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>' +
+    '</filter>' +
+    '<filter id="dm-soft" x="-30%" y="-30%" width="160%" height="160%">' +
+      '<feGaussianBlur stdDeviation="6"/></filter>' +
+    '<filter id="dm-soft2" x="-40%" y="-40%" width="180%" height="180%">' +
+      '<feGaussianBlur stdDeviation="14"/></filter>' +
+    '<filter id="dm-grain" x="0" y="0" width="100%" height="100%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>' +
+      '<feColorMatrix type="saturate" values="0"/>' +
+      '<feComponentTransfer><feFuncA type="linear" slope="0.55"/></feComponentTransfer>' +
+    '</filter>' +
+    '</defs>';
+
+  function ensureDefs() {
+    if (typeof document === 'undefined') return;
+    if (document.getElementById('dm-defs')) return;
+    var host = document.body || document.documentElement;
+    if (!host) return;
+    var s = document.createElementNS(NS, 'svg');
+    s.setAttribute('id', 'dm-defs');
+    s.setAttribute('aria-hidden', 'true');
+    s.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+    s.innerHTML = DEFILTERS;
+    host.appendChild(s);
+  }
 
   function km(a, b) {
     var clat = (a.lat + b.lat) / 2 * Math.PI / 180;
@@ -379,9 +654,12 @@
      改成对所有点对反复松弛：每轮把过近的点对互相推开，同时给一个回到真实位置的
      弱回弹力（防止整体漂走、方向失真），再夹回视野内。夹紧会重新造出重叠，
      所以末尾补几轮只推不回弹，把重叠排干净。 */
-  function spreadOverlaps(pts, minD, bounds) {
+  function spreadOverlaps(pts, gap, bounds) {
     var n = pts.length;
     if (n < 2) return;
+    /* 需要的间距按两个节点各自的半径算：地标贴纸（约 20）比普通车站（约 12）
+       大一圈，用同一个固定值会让贴纸叠在一起。 */
+    function need(i, j) { return (pts[i].r || 12) + (pts[j].r || 12) + gap; }
     var ox = pts.map(function (p) { return p.x; });
     var oy = pts.map(function (p) { return p.y; });
     var pull = 0.06;   // 回弹强度：够拉住不漂，又不会把点拽回重叠
@@ -393,6 +671,7 @@
         for (j = i + 1; j < n; j++) {
           var dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y;
           var d = Math.sqrt(dx * dx + dy * dy);
+          var minD = need(i, j);
           if (d >= minD) continue;
           if (d < 0.01) {
             // 完全重合时没有方向可推，用黄金角给一个确定性的分散方向
@@ -410,8 +689,10 @@
 
     function clamp() {
       for (i = 0; i < n; i++) {
-        pts[i].x = Math.max(bounds.pad, Math.min(bounds.w - bounds.pad, pts[i].x));
-        pts[i].y = Math.max(bounds.pad, Math.min(bounds.h - bounds.pad, pts[i].y));
+        // 贴纸自己也不能出画布；bounds.pad 是给标签留的余量，两者取大的
+        var p = Math.max(bounds.pad, (pts[i].r || 12) + 2);
+        pts[i].x = Math.max(p, Math.min(bounds.w - p, pts[i].x));
+        pts[i].y = Math.max(p, Math.min(bounds.h - p, pts[i].y));
       }
     }
 
@@ -429,58 +710,101 @@
     }
   }
 
-  /* 地名标签挑位置：八个候选方向里选第一个既不压住别的圆点、不压住已放好的标签、
-     也不出画布的。
+  /* 45° 折线：min(|dx|,|dy|) 走斜段，其余走直段 —— 标准轨道交通图画法。
+     直连斜线在密集日会互相穿插成一张网，折成 45° 之后每条边只有横/竖/斜三种
+     走向，先后顺序一眼能顺着读下来。 */
+  function elbow(x1, y1, x2, y2) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var adx = Math.abs(dx), ady = Math.abs(dy);
+    var sx = dx < 0 ? -1 : 1, sy = dy < 0 ? -1 : 1;
+    if (adx < 1 || ady < 1) {
+      return 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + 'L' + x2.toFixed(1) + ' ' + y2.toFixed(1);
+    }
+    if (adx >= ady) {
+      return 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+        'H' + (x1 + sx * (adx - ady)).toFixed(1) +
+        'L' + x2.toFixed(1) + ' ' + y2.toFixed(1);
+    }
+    return 'M' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+      'V' + (y1 + sy * (ady - adx)).toFixed(1) +
+      'L' + x2.toFixed(1) + ' ' + y2.toFixed(1);
+  }
+
+  function labelWidth(name, o) {
+    var w = 0;
+    for (var i = 0; i < name.length; i++) {
+      w += name.charCodeAt(i) > 255 ? o.cjkW : o.latinW;   // 中日韩按一个字宽，西文按半宽
+    }
+    return w;
+  }
+
+  /* 候选位置 = 左右两侧 × 上下多档偏移，逐个试到既不撞已放好的标签、
+     也不压住别的节点（含地标右下角的编号徽章）为止。
      最早是固定「看 x 决定左右、看 y 决定上下」两条规则，实测 D4/D12 的起点标签
      会正好糊在 3 号/4 号圆上——两个点落在同一侧时，这个简单规则必然撞车。
-     改成多候选逐个试，并把试过的位置记进 placed，让先后两个标签之间也互相避让。 */
-  function placeLabel(x, y, name, pts, self, W, H, placed) {
-    var w = 0;
-    for (var k = 0; k < name.length; k++) {
-      w += name.charCodeAt(k) > 255 ? 21 : 11;   // 中日韩字按一个字宽算，西文按半宽
-    }
-    var cands = [
-      { anchor: 'start', tx: x + 28, ty: y + 7 },
-      { anchor: 'end', tx: x - 28, ty: y + 7 },
-      { anchor: 'middle', tx: x, ty: y + 44 },
-      { anchor: 'middle', tx: x, ty: y - 32 },
-      { anchor: 'start', tx: x + 22, ty: y + 36 },
-      { anchor: 'end', tx: x - 22, ty: y + 36 },
-      { anchor: 'start', tx: x + 22, ty: y - 28 },
-      { anchor: 'end', tx: x - 22, ty: y - 28 },
-      { anchor: 'middle', tx: x, ty: y + 62 },
-      { anchor: 'middle', tx: x, ty: y - 50 }
-    ];
-    var best = null;
-    for (var c = 0; c < cands.length; c++) {
-      var o = cands[c];
-      var x0 = o.anchor === 'start' ? o.tx : (o.anchor === 'end' ? o.tx - w : o.tx - w / 2);
-      var x1 = x0 + w;
-      var y0 = o.ty - 17, y1 = o.ty + 7;
-      if (x0 < 2 || x1 > W - 2 || y0 < 2 || y1 > H - 2) continue;
-      var hit = false;
-      for (var m = 0; m < pts.length && !hit; m++) {
-        if (m === self) continue;
-        // 矩形到圆心的最近点距离，小于圆半径 + 余量即算压住。
-        // 余量留到 22 是因为估算字宽与实际 getBBox 有出入，宁可多躲一点
-        var nx = Math.max(x0, Math.min(pts[m].x, x1));
-        var ny = Math.max(y0, Math.min(pts[m].y, y1));
-        if (Math.hypot(pts[m].x - nx, pts[m].y - ny) < 22) hit = true;
+     后来改多候选但只往下挪，D9 六站挤在拉丁区时撞完所有档、整条漏标；
+     必须允许翻到另一侧才有解。
+     放不下就跳过：硬塞只会糊在节点上，比不画更糟——地名在下方清单里一份不少。 */
+  var LABEL_DY = [0, 19, -19, 38, -38, 57, -57, 76, -76, 95, -95, 114, -114];
+
+  /* placed 由调用方持有并传进来：正常轮和放宽轮要共享同一份已占区域，
+     否则第二轮会把标签压在第一轮上。
+     force=true 是第三轮兜底：连放宽都塞不下时，挑「压得最轻」的那个位置硬放。
+     整条漏标的观感比轻微压线更糟——地名在清单里有，但图上少一个就会被人当成 bug。 */
+  function placeLabels(items, obs, vb, o, relax, placed, force) {
+    var res = [];
+    var padX = relax ? 1 : 5, padY = relax ? 1 : 3, clear = relax ? 1 : 6;
+    var dys = relax ? LABEL_DY.concat([133, -133, 152, -152]) : LABEL_DY;
+    items.forEach(function (it) {
+      var w = labelWidth(it.name, o);
+      var pref = it.x < vb.w / 2 ? 1 : -1;   // 先试朝画面中心的那一侧，空间更大
+      var cands = [];
+      [pref, -pref].forEach(function (side) {
+        dys.forEach(function (dy) { cands.push({ side: side, dy: dy }); });
+      });
+      // 正上 / 正下居中：长地名在 440 宽的画布上，两侧都伸出去时常常只剩这一处
+      cands.push({ side: 0, dy: -(it.r + 26) });
+      cands.push({ side: 0, dy: it.r + 36 });
+
+      var got = null, best = null, bestPen = Infinity;
+      for (var c = 0; c < cands.length && !got; c++) {
+        var side = cands[c].side;
+        var anchor = side < 0 ? 'end' : (side > 0 ? 'start' : 'middle');
+        var tx = it.x + side * (it.r + o.labelGap);
+        var ty = it.y + 5 + cands[c].dy;
+        var x0 = anchor === 'end' ? tx - w : (anchor === 'middle' ? tx - w / 2 : tx);
+        var x1 = x0 + w;
+        var y0 = ty - 13, y1 = ty + 6;
+        if (x0 < 4 || x1 > vb.w - 4 || y0 < 2 || y1 > vb.h - 2) continue;
+        var pen = 0, m, hit = false;
+        for (m = 0; m < placed.length; m++) {
+          var p = placed[m];
+          var ox = Math.min(x1, p.x1) - Math.max(x0, p.x0) + padX;
+          var oy = Math.min(y1, p.y1) - Math.max(y0, p.y0) + padY;
+          if (ox > 0 && oy > 0) { hit = true; pen += ox * oy; }
+        }
+        for (m = 0; m < obs.length; m++) {
+          if (obs[m].k === it.i) continue;                 // 自己的节点和徽章不算障碍
+          var nx = Math.max(x0, Math.min(obs[m].x, x1));
+          var ny = Math.max(y0, Math.min(obs[m].y, y1));
+          var d = Math.hypot(obs[m].x - nx, obs[m].y - ny);
+          if (d < obs[m].r + clear) { hit = true; pen += (obs[m].r + clear - d) * 20; }
+        }
+        if (!hit) {
+          got = { tx: tx, ty: ty, anchor: anchor };
+          placed.push({ x0: x0, x1: x1, y0: y0, y1: y1 });
+        } else if (pen < bestPen) {
+          bestPen = pen;
+          best = { tx: tx, ty: ty, anchor: anchor, x0: x0, x1: x1, y0: y0, y1: y1 };
+        }
       }
-      for (var q = 0; q < placed.length && !hit; q++) {
-        if (x0 < placed[q].x1 + 6 && x1 > placed[q].x0 - 6 &&
-          y0 < placed[q].y1 + 4 && y1 > placed[q].y0 - 4) hit = true;
+      if (!got && force && best) {
+        got = { tx: best.tx, ty: best.ty, anchor: best.anchor };
+        placed.push({ x0: best.x0, x1: best.x1, y0: best.y0, y1: best.y1 });
       }
-      if (!hit) {
-        var bx = o.anchor === 'start' ? o.tx : (o.anchor === 'end' ? o.tx - w : o.tx - w / 2);
-        placed.push({ x0: bx, x1: bx + w, y0: y0, y1: y1 });
-        return o;
-      }
-    }
-    /* 八个方向全被占：这一天该处的点本来就挤（D9 的巴黎拉丁区五点在 45×76 里），
-       硬塞一个标签只会糊在圆点上，比不画更糟——地名在下方清单里一份不少。
-       返回 null，调用方跳过这个标签。 */
-    return null;
+      if (got) res.push({ i: it.i, tx: got.tx, ty: got.ty, anchor: got.anchor });
+    });
+    return res;
   }
 
   /* 生成一天地图的 HTML（SVG + 下方可点清单） */
@@ -489,18 +813,25 @@
     var stops = parsed.stops;
     if (stops.length < 2) return '';
 
+    ensureDefs();
     var base = pickBase(stops);
     /* viewBox 宽度 440：手机上卡片内宽约 300px，缩放约 0.68。
-       这个比例下 r=12 的节点直径约 16px、序号约 11px、r=30 的透明热区约 41px，
+       这个比例下普通车站直径约 16px、地标贴纸约 27px、r=30 的透明热区约 41px，
        刚好跨过 40px 触控标准。改这个数时要同时复核那三个值。 */
     var OUT_W = 440;
     var v = makeView(stops, OUT_W);
+    var o = OPTS;
+    var col = day.color || 'var(--accent)';
 
     // 屏幕坐标：重叠点先摊开。底图的 notes 冲突检测、连线和圆点都读这一份，
     // 保证「同一个点在图上只有一个位置」。
-    var pts = stops.map(function (s) { return { x: v.X(s.lon), y: v.Y(s.lat) }; });
-    // 夹取边距 40：节点半径 12 + 标签往外伸 28，贴着 34 的话标签必然出界
-    spreadOverlaps(pts, 30, { pad: 40, w: OUT_W, h: v.h });
+    // r 是「排布半径」：地标贴纸连同右下角的编号徽章约占 20，普通车站 12.5。
+    var pts = stops.map(function (s) {
+      var ico = LANDMARK[s.name] || null;
+      return { x: v.X(s.lon), y: v.Y(s.lat), ico: ico, r: ico ? o.lmR + 4 : o.stationR + 1 };
+    });
+    // 夹取边距 40：节点半径 + 标签往外伸 30 多，贴着 34 的话标签必然出界
+    spreadOverlaps(pts, o.spreadGap, { pad: 40, w: OUT_W, h: v.h });
 
     var svg = [];
     svg.push('<svg class="dm-svg" viewBox="0 0 ' + OUT_W + ' ' + v.h.toFixed(0) +
@@ -513,7 +844,12 @@
     if (base.coast && base.seaSide) {
       // 平移距离取视野的对角量级，保证视野内的海全被盖住；换算成度（约 100km/度）
       var D = v.spanKm * 1.2 / 100;
-      svg.push('<path class="dm-sea" d="' + linePath(seaPoly(base.coast, base.seaSide, D), v) + 'Z"/>');
+      var seaD = linePath(seaPoly(base.coast, base.seaSide, D), v) + 'Z';
+      /* 水彩感：在海面之上叠两层高斯模糊的副本，把硬边晕开。
+         顺序是先大模糊后小模糊，大的当底色晕圈，小的补一层近岸的浓一点的水色。 */
+      svg.push('<path class="dm-sea dm-sea-blur2" d="' + seaD + '" filter="url(#dm-soft2)"/>');
+      svg.push('<path class="dm-sea dm-sea-blur1" d="' + seaD + '" filter="url(#dm-soft)"/>');
+      svg.push('<path class="dm-sea" d="' + seaD + '"/>');
     }
     if (base.ring) {
       svg.push('<path class="dm-ring" d="' + ringPath(base.ring, v) + '"/>');
@@ -547,6 +883,11 @@
     if (base.coast) {
       svg.push('<path class="dm-coast" d="' + linePath(base.coast, v) + '"/>');
     }
+    /* 纸纹铺在底图墨线之上、路线层之下：物理上纸纹本来就该在墨下面，
+       但那样会被海面和陆地的实色盖掉；压在底图上、让路线层再盖上去，
+       既看得到颗粒又不糊住要读的字。 */
+    svg.push('<rect class="dm-grain" x="0" y="0" width="' + OUT_W + '" height="' + v.h.toFixed(0) +
+      '" filter="url(#dm-grain)"/>');
     if (base.cities) {
       base.cities.forEach(function (c) {
         svg.push('<circle class="dm-city" cx="' + v.X(c[0]).toFixed(1) + '" cy="' + v.Y(c[1]).toFixed(1) + '" r="4"/>');
@@ -566,62 +907,127 @@
       });
     }
 
-    // ---- 连线 ----
+    /* ---- 路线层：地铁语法 ----
+       分两个图层：dm-rough 套一层极轻的抖动滤镜（线和图标一起抖，手绘味从这里来），
+       dm-ink 不加滤镜 —— 编号和地名必须保持清晰，抖过小字会糊。 */
+    var rough = [], ink = [], hits = [];
+
+    // 1) 连线：45° 折线，先铺纸色套管再压彩色主线
     parsed.legs.forEach(function (leg) {
-      var x1 = pts[leg.a].x, y1 = pts[leg.a].y;
-      var x2 = pts[leg.b].x, y2 = pts[leg.b].y;
-      var cls = leg.kind === 'walk' ? 'dm-leg' : 'dm-leg dm-leg-far';
-      svg.push('<line class="' + cls + '" x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) +
-        '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + (day.color || 'var(--accent)') + '"/>');
+      var a = pts[leg.a], b = pts[leg.b];
+      var d = elbow(a.x, a.y, b.x, b.y);
+      var far = leg.kind !== 'walk';
+      rough.push('<path class="dm-mc" d="' + d + '" stroke-width="' + (far ? o.casingFarW : o.casingW) + '"/>');
+      rough.push('<path class="dm-ml' + (far ? ' dm-ml-far' : '') + '" d="' + d +
+        '" stroke="' + col + '" stroke-width="' + (far ? o.lineFarW : o.lineW) + '"/>');
 
       if (leg.label) {
-        // 交通段：中点放一个小胶囊标签
-        var mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-        var icon = leg.kind === 'rail' ? '🚄' : '✈';
-        var txt = icon + ' ' + leg.label;
-        var wpx = txt.length * 9.5 + 18;
-        svg.push('<g class="dm-chip">');
-        svg.push('<rect x="' + (mx - wpx / 2).toFixed(1) + '" y="' + (my - 13).toFixed(1) +
-          '" width="' + wpx.toFixed(1) + '" height="26" rx="13"/>');
-        svg.push('<text x="' + mx.toFixed(1) + '" y="' + (my + 5).toFixed(1) + '" text-anchor="middle">' + esc(txt) + '</text>');
-        svg.push('</g>');
+        // 交通段：中点贴一张小纸片写车次
+        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        var txt = (leg.kind === 'rail' ? '🚄' : '✈') + ' ' + leg.label;
+        var wpx = labelWidth(txt, o) + 20;
+        ink.push('<g class="dm-mchip">' +
+          '<rect x="' + (mx - wpx / 2).toFixed(1) + '" y="' + (my - 13).toFixed(1) +
+          '" width="' + wpx.toFixed(1) + '" height="26" rx="7"/>' +
+          '<text x="' + mx.toFixed(1) + '" y="' + (my + 6).toFixed(1) + '" text-anchor="middle">' +
+          esc(txt) + '</text></g>');
       } else if (leg.kind === 'air') {
-        var ax = (x1 + x2) / 2, ay = (y1 + y2) / 2;
-        svg.push('<text class="dm-fly" x="' + ax.toFixed(1) + '" y="' + (ay - 10).toFixed(1) +
-          '" text-anchor="middle">✈</text>');
+        ink.push('<text class="dm-fly" x="' + ((a.x + b.x) / 2).toFixed(1) +
+          '" y="' + ((a.y + b.y) / 2 - 12).toFixed(1) + '" text-anchor="middle">✈</text>');
       }
     });
 
-    // ---- 节点 ----
-    /* 只给起点和终点写地名。中间站的名都写出来，在 440 单位宽里必然互相压住，
-       而「从哪出发、到哪结束」才是第一眼要读的信息，中间站交给下方清单。 */
-    var placed = [];
-    stops.forEach(function (s, i) {
-      var x = pts[i].x, y = pts[i].y;
-      var isEnd = (i === 0 || i === stops.length - 1);
-      svg.push('<a class="dm-node" href="' + esc(gmapUrl(s.q)) + '" target="_blank" rel="noopener">');
-      // 透明热区：手机上 12 单位的圆点只有约 9px，手指点不中，这里外扩一圈不可见的命中区
-      svg.push('<circle class="dm-hit" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="30"/>');
-      svg.push('<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="12" fill="' + (day.color || 'var(--accent)') + '"/>');
-      svg.push('<text class="dm-num" x="' + x.toFixed(1) + '" y="' + (y + 5).toFixed(1) +
-        '" text-anchor="middle">' + (i + 1) + '</text>');
-      if (isEnd) {
-        var lp = placeLabel(x, y, s.name, pts, i, OUT_W, v.h, placed);
-        // lp 为 null = 八个方向都放不下，宁可不画也不糊住圆点（地名在下方清单里）
-        if (lp) {
-          svg.push('<text class="dm-lbl" x="' + lp.tx.toFixed(1) + '" y="' + lp.ty.toFixed(1) +
-            '" text-anchor="' + lp.anchor + '">' + esc(s.name) + '</text>');
-        }
+    // 2) 节点：地标 = 纸片 + 手绘图标 + 编号徽章；普通点 = 空心车站 + 编号
+    //    obs 同时收集所有占位（节点本体 + 徽章），供标签避让用
+    var obs = [];
+    pts.forEach(function (p, i) {
+      var x = p.x, y = p.y;
+      obs.push({ x: x, y: y, r: p.r, k: i });
+      if (p.ico) {
+        var s = o.icoScale, off = 24 * s;
+        rough.push('<circle class="dm-lmb" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + o.lmR + '"/>');
+        rough.push('<g class="dm-ico" transform="translate(' + (x - off).toFixed(1) + ',' + (y - off).toFixed(1) +
+          ') scale(' + s + ')" stroke="' + col + '">' + p.ico + '</g>');
+        // 徽章压在纸片右下角、一半探出去，像贴在手册上的编号贴
+        var bx = x + o.badgeOff, by = y + o.badgeOff;
+        obs.push({ x: bx, y: by, r: o.badgeR, k: i });
+        ink.push('<circle class="dm-bdg" cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) +
+          '" r="' + o.badgeR + '" fill="' + col + '"/>');
+        ink.push('<text class="dm-bdgn" x="' + bx.toFixed(1) + '" y="' + (by + 3.4).toFixed(1) +
+          '" text-anchor="middle">' + (i + 1) + '</text>');
+      } else {
+        rough.push('<circle class="dm-ms" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) +
+          '" r="' + o.stationR + '" stroke="' + col + '"/>');
+        ink.push('<text class="dm-mno" x="' + x.toFixed(1) + '" y="' + (y + 4.4).toFixed(1) +
+          '" text-anchor="middle" fill="' + col + '">' + (i + 1) + '</text>');
       }
-      svg.push('</a>');
     });
+
+    // 3) 地名：默认每个点都写（这是 G 方案相对旧版最大的可读性提升）。
+    //    起点终点先挑位置 —— 它们是最该被读到的两个，不能让中间站先把好位置占了。
+    //    哪天觉得太满，在 DAYS 里给那天加 mapLabels:'ends' 就退回只标首尾。
+    var showAll = ALL_LABELS && day.mapLabels !== 'ends';
+    var items = [], oi;
+    var order = [0, stops.length - 1];
+    for (oi = 1; oi < stops.length - 1; oi++) order.push(oi);
+    order.forEach(function (i) {
+      if (!showAll && i !== 0 && i !== stops.length - 1) return;
+      items.push({ i: i, x: pts[i].x, y: pts[i].y, r: pts[i].r, name: stops[i].name });
+    });
+    var vb = { w: OUT_W, h: v.h }, placed = [];
+    var labels = placeLabels(items, obs, vb, o, false, placed);
+    if (labels.length < items.length) {
+      /* 兜底一轮：把间距放宽到几乎相接，再往外多试两档。
+         标签外面有 5 单位纸色描边，轻微相接仍然读得清；
+         全放不下才真的放弃 —— 那时硬塞只会糊成一团，不如留给下方清单。 */
+      var done = {};
+      labels.forEach(function (L) { done[L.i] = 1; });
+      labels = labels.concat(placeLabels(items.filter(function (it) {
+        return !done[it.i];
+      }), obs, vb, o, true, placed, false));
+    }
+    if (labels.length < items.length) {
+      /* 最后一轮：放宽轮还没吃下的（如 D5 的「大教堂」），挑压得最轻的位置硬放。 */
+      var done2 = {};
+      labels.forEach(function (L) { done2[L.i] = 1; });
+      labels = labels.concat(placeLabels(items.filter(function (it) {
+        return !done2[it.i];
+      }), obs, vb, o, true, placed, true));
+    }
+    labels.forEach(function (L) {
+      ink.push('<text class="dm-lbl" x="' + L.tx.toFixed(1) + '" y="' + L.ty.toFixed(1) +
+        '" text-anchor="' + L.anchor + '">' + esc(stops[L.i].name) + '</text>');
+    });
+
+    // 4) 点击热区单独一层压在最上面。半径按最近邻距离收缩：一律 30 的话，
+    //    密集日的热区会互相盖住，点 3 号跳到 4 号。
+    stops.forEach(function (s, i) {
+      var x = pts[i].x, y = pts[i].y, near = Infinity;
+      for (var m = 0; m < pts.length; m++) {
+        if (m === i) continue;
+        near = Math.min(near, Math.hypot(pts[m].x - x, pts[m].y - y));
+      }
+      // 半径取到最近邻距离的一半：热区不重叠，点 3 号不会跳到 4 号。
+      // 下限 24（手机约 38px 直径）而不是 15 —— 15 只有 24px，手指点不中。
+      // 真被夹到下限时会和邻居轻微重叠，此时 DOM 里靠后的站点赢，
+      // 量级只在几像素，误触概率远低于「点不中」。
+      var hr = Math.max(24, Math.min(30, near / 2));
+      hits.push('<a class="dm-node" href="' + esc(gmapUrl(s.q)) + '" target="_blank" rel="noopener">' +
+        '<circle class="dm-hit" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + hr.toFixed(1) + '"/>' +
+        '</a>');
+    });
+
+    svg.push('<g class="dm-rough" filter="url(#dm-rough-s)">' + rough.join('') + '</g>');
+    svg.push('<g class="dm-ink">' + ink.join('') + '</g>');
+    svg.push('<g class="dm-hits">' + hits.join('') + '</g>');
 
     svg.push('</svg>');
 
     // ---- 下方清单：编号与地图一一对应，每个可点开地图 ----
     var list = stops.map(function (s, i) {
-      return '<a class="dm-item" href="' + esc(gmapUrl(s.q)) + '" target="_blank" rel="noopener">' +
-        '<span class="dm-item-n" style="background:' + (day.color || 'var(--accent)') + '">' + (i + 1) + '</span>' +
+      return '<a class="dm-item' + (LANDMARK[s.name] ? ' is-lm' : '') +
+        '" href="' + esc(gmapUrl(s.q)) + '" target="_blank" rel="noopener">' +
+        '<span class="dm-item-n" style="background:' + col + '">' + (i + 1) + '</span>' +
         '<span class="dm-item-t">' + esc(s.name) + '</span>' +
         '<span class="dm-item-go" aria-hidden="true">›</span>' +
         '</a>';
