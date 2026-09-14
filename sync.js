@@ -246,6 +246,49 @@
     });
   }
 
+  /* ---------------- 邀请链接 ----------------
+     让同伴加入要填三样东西（地址 / 令牌 / 房间号），口述或手打必然出错。
+     所以把配置编进一条链接，对方点开就自动配好。
+     用 ?join= 而不是 #join=：本页的锚点会被 checkHashUnlock 清掉，
+     而 replaceState 只保留 pathname + search，query 能活到我们读取它。
+     拿到之后立刻把 query 抹掉 —— 链接等同于钥匙，别让它留在地址栏和
+     浏览历史里。 */
+  function enc(o) {
+    try {
+      return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(o)))));
+    } catch (e) { return ''; }
+  }
+  function dec(s) {
+    try {
+      return JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(s)))));
+    } catch (e) { return null; }
+  }
+  function packCfg(c) {
+    return { t: c.type, u: c.url, k: c.token, r: c.room };
+  }
+  function unpackCfg(o) {
+    if (!o || typeof o !== 'object' || !o.u) return null;
+    var t = o.t === 'upstash' || o.t === 'worker' ? o.t : 'none';
+    return { type: t, url: String(o.u), token: String(o.k || ''), room: String(o.r || 'eu2026') };
+  }
+  function buildInvite(c, baseUrl) {
+    var packed = enc(packCfg(c));
+    if (!packed) return '';
+    var base = baseUrl || (location.origin + location.pathname);
+    return base + '?join=' + packed;
+  }
+  function consumeInvite() {
+    var m = /[?&]join=([^&]+)/.exec(location.search || '');
+    if (!m) return null;
+    var cfg = unpackCfg(dec(m[1]));
+    // 不管解析成功与否都清掉，免得钥匙留在地址栏
+    try {
+      history.replaceState(null, '', location.pathname + (location.hash || ''));
+    } catch (e) { /* 忽略 */ }
+    if (cfg) writeCfg(cfg);
+    return cfg;
+  }
+
   /* ---------------- 状态订阅 ---------------- */
   var listeners = [];
   function onChange(fn) { listeners.push(fn); }
@@ -272,6 +315,14 @@
     syncNow: syncNow,
     testConnection: testConnection,
     onChange: onChange,
-    notify: notify
+    notify: notify,
+    buildInvite: buildInvite,
+    consumeInvite: consumeInvite
   };
+
+  /* 脚本一加载就吃掉邀请链接：这样同伴点开链接时，账本 init() 跑起来
+     之前配置已经就位，开页自动拉取能直接生效。 */
+  var joined = null;
+  try { joined = consumeInvite(); } catch (e) { /* 忽略 */ }
+  window.CloudSync.joinedFromInvite = joined;
 })();

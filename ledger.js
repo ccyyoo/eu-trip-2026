@@ -91,9 +91,11 @@
       tripId: TRIP_ID,
       settings: JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),
       travelers: [
-        /* 成员色取自同一蓝绿家族，靠明度区分：主 teal / 亮青蓝 */
-        { id: 'p-yy', name: '陈圆圆', initial: '陈', color: '#0E8079', createdAt: nowIso(), updatedAt: nowIso(), deleted: false },
-        { id: 'p-lm', name: '刘敏', initial: '刘', color: '#4A9BB5', createdAt: nowIso(), updatedAt: nowIso(), deleted: false }
+        /* 默认只给代号：账本可能要在两人甚至多人手机间传来传去，
+           也可能截图外发，默认名不该带真实姓名。想叫什么自己改。
+           成员色取自同一蓝绿家族，靠明度区分：主 teal / 亮青蓝 */
+        { id: 'p-yy', name: '成员 A', initial: 'A', color: '#0E8079', createdAt: nowIso(), updatedAt: nowIso(), deleted: false },
+        { id: 'p-lm', name: '成员 B', initial: 'B', color: '#4A9BB5', createdAt: nowIso(), updatedAt: nowIso(), deleted: false }
       ],
       bills: [],
       exportedAt: null
@@ -368,11 +370,23 @@
       if (billConflicts.length) { merged++; conflicts = conflicts.concat(billConflicts); }
     });
 
-    /* 合并对方账本里的成员（不覆盖本机已有成员） */
+    /* 合并对方账本里的成员。
+       这里必须允许「改名」同步过去：原来只判断 id 存不存在、存在就跳过，
+       结果一方把「成员 A」改成「柚子」，另一方永远同步不到这个改动，
+       两个人看到的成员名就会不一致。改成按 updatedAt 取新的那份。 */
     if (Array.isArray(incoming.travelers)) {
       incoming.travelers.forEach(function (t) {
         if (!t || !t.id) return;
-        if (!state.travelers.some(function (x) { return x.id === t.id; })) state.travelers.push(t);
+        var mine = state.travelers.filter(function (x) { return x.id === t.id; })[0];
+        if (!mine) { state.travelers.push(t); return; }
+        var rt = Date.parse(t.updatedAt || 0) || 0;
+        var mt = Date.parse(mine.updatedAt || 0) || 0;
+        if (rt > mt) {
+          mine.name = t.name || mine.name;
+          mine.initial = t.initial || mine.initial;
+          mine.color = t.color || mine.color;
+          mine.updatedAt = t.updatedAt;
+        }
       });
     }
 
@@ -908,6 +922,7 @@
   /* 云同步设置面板：默认收起，点「☁ 云同步」展开。
      凭据只存本机 localStorage —— 这个仓库是公开的，绝不能写进代码。 */
   var cloudOpen = false;
+  var inviteUrl = '';
 
   function renderCloudPanel() {
     var box = $('lg-cloud');
@@ -944,8 +959,54 @@
           '<button type="button" class="lg-mini" data-cl="save">保存</button>' +
           '<button type="button" class="lg-mini" data-cl="test">测试连接</button>' +
           '<button type="button" class="lg-mini" data-cl="now">立即同步</button>' +
+          '<button type="button" class="lg-mini" data-cl="invite">邀请同伴</button>' +
         '</div>' +
+        inviteMarkup() +
+        membersMarkup() +
       '</div>';
+  }
+
+  /* 邀请区块。链接里带着云端令牌 = 一把钥匙，提示写清楚别乱发。 */
+  function inviteMarkup() {
+    if (!inviteUrl) return '';
+    return '<div class="lg-invite">' +
+      '<div class="lg-cloud-h">邀请链接</div>' +
+      '<input id="lg-invite-url" type="text" readonly value="' + esc(inviteUrl) + '">' +
+      '<div class="lg-cloud-btns">' +
+        '<button type="button" class="lg-mini" data-cl="copy">复制链接</button>' +
+      '</div>' +
+      '<div class="lg-cloud-note">同伴点开这条链接就自动配好，不用手填。' +
+        '链接里含云端令牌，等同钥匙，只在私聊里发，别贴到公开地方。</div>' +
+    '</div>';
+  }
+
+  /* 成员昵称。默认给代号，点一下就能改成两人的暗号。 */
+  function membersMarkup() {
+    var rows = state.travelers.map(function (p) {
+      return '<button type="button" class="lg-mem" data-mem="' + esc(p.id) + '">' +
+        '<span class="lg-av" style="background:' + esc(p.color) + '">' + esc(p.initial) + '</span>' +
+        '<span class="lg-mem-n">' + esc(p.name) + '</span>' +
+        '<span class="lg-mem-e">改名</span></button>';
+    }).join('');
+    return '<div class="lg-cloud-h">分摊成员（点一下改名）</div>' +
+      '<div class="lg-members">' + rows + '</div>' +
+      '<div class="lg-cloud-note">默认只给代号，不写真实姓名 —— 账本要在两台手机间传，' +
+        '也可能会截图外发。改成你们自己的昵称即可，改名会同步给同伴。</div>';
+  }
+
+  function renameMember(id) {
+    var p = state.travelers.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    var v = window.prompt('给这位成员起个名字（建议用昵称或代号，别写真名）', p.name);
+    if (v === null) return;
+    v = String(v).trim().slice(0, 8);
+    if (!v) { toast('名字不能为空'); return; }
+    p.name = v;
+    p.initial = v.slice(0, 1);
+    p.updatedAt = nowIso();
+    save();
+    render();
+    toast('已改成「' + esc(v) + '」，下次同步会传给同伴');
   }
 
   function cloudForm() {
@@ -982,6 +1043,33 @@
       runCloudSync(false);
       return;
     }
+    if (kind === 'invite') {
+      if (c.type === 'none' || !c.url) { toast('先配好云端再来邀请'); return; }
+      window.CloudSync.writeCfg(c);
+      inviteUrl = window.CloudSync.buildInvite(c);
+      renderCloudPanel();
+      return;
+    }
+    if (kind === 'copy') {
+      var el = $('lg-invite-url');
+      if (!el) return;
+      copyText(inviteUrl).then(function (done) {
+        toast(done ? '链接已复制，发给同伴就行' : '复制失败，请手动选中上面的链接复制');
+        if (!done && el) { el.focus(); el.select(); }
+      });
+      return;
+    }
+  }
+
+  /* 复制走异步剪贴板，失败降级为「选中输入框让用户自己按拷贝」。
+     非 HTTPS 或老浏览器上没有 clipboard API，别直接 assume 有。 */
+  function copyText(s) {
+    if (!s) return Promise.resolve(false);
+    if (window.navigator && window.navigator.clipboard && window.navigator.clipboard.writeText) {
+      return window.navigator.clipboard.writeText(s).then(function () { return true; },
+        function () { return false; });
+    }
+    return Promise.resolve(false);
   }
 
   function runCloudSync(quiet) {
@@ -1071,6 +1159,7 @@
         if (t.dataset.edit) { openEdit(t.dataset.edit); return; }
         if (t.dataset.del) { removeBill(t.dataset.del); render(); return; }
         if (t.dataset.cl) { cloudAction(t.dataset.cl); return; }
+        if (t.dataset.mem) { renameMember(t.dataset.mem); return; }
         var act = t.dataset.act;
         if (!act) return;
         if (act === 'new') openEntry(window.App ? window.App.state.activeDay : null);
@@ -1169,7 +1258,12 @@
   function init() {
     save();
     bindOnce();
+    /* 从邀请链接进来的：配置已经写好了，直接摊开面板告诉他一声，
+       别让人对着空账本以为没连上。 */
+    var joined = window.CloudSync && window.CloudSync.joinedFromInvite;
+    if (joined) cloudOpen = true;
     render();
+    if (joined) toast('已加入共享账本，正在拉取同伴的账目…', 4000);
     /* 打开页面先拉一次云端：这是「电脑上记完，手机打开就能看到」的那一环。
        放在 render 之后，合并进来的账能立刻画出来。 */
     if (cloudOn()) setTimeout(function () { runCloudSync(true); }, 300);

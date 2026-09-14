@@ -674,8 +674,25 @@ footer a{color:var(--text-faint)}
 /* iOS Safari 有个老规矩：input 字号小于 16px 时，一聚焦就把整页放大。
    填地址令牌本来就要看全，放大一次再手动缩回来很烦，所以手机端直接给到 16px。 */
 @media (max-width:768px){
-  .lg-cloud-row input{font-size:16px}
+  .lg-cloud-row input,.lg-invite #lg-invite-url{font-size:16px}
 }
+
+/* 成员昵称：点一整行改名，44px 高保证手机上点得中 */
+.lg-members{display:flex;flex-direction:column;gap:8px}
+.lg-mem{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;
+  border:1px solid var(--border-strong);border-radius:var(--radius);
+  background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;
+  cursor:pointer;text-align:left}
+.lg-mem:active{opacity:.85}
+.lg-mem-n{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-mem-e{font-size:11px;color:var(--text-muted);flex-shrink:0}
+
+/* 邀请链接：只读输入框，方便手动选中兜底复制 */
+.lg-invite{display:flex;flex-direction:column;gap:8px;
+  border-top:1px dashed var(--border);padding-top:10px}
+.lg-invite #lg-invite-url{width:100%;min-height:40px;padding:0 10px;
+  border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);
+  color:var(--text-2);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .lg-btn{min-height:44px;padding:0 18px;border:1px solid var(--border-strong);border-radius:var(--radius);
   background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .lg-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
