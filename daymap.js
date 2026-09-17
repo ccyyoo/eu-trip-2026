@@ -55,6 +55,7 @@
     '大教堂':              [2.1760, 41.3839, 'Catedral de Barcelona'],
     "Portal de l'Àngel":   [2.1735, 41.3855, 'Portal de l\'Àngel Barcelona'],
     '兰布拉':              [2.1730, 41.3800, 'La Rambla Barcelona'],
+    '成都小馆':            [2.1712, 41.3915, 'Restaurante Chengdu Barcelona'],
 
     // ===== 尼斯 / 昂蒂布 =====
     '尼斯机场民宿':         [7.2159, 43.6699, '52 Boulevard René Cassin Nice'],
