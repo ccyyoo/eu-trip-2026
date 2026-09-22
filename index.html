@@ -344,6 +344,28 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .todo-content small{display:block;color:var(--text-muted);font-size:11px;margin-top:2px;line-height:1.5}
 .todo-section{padding:14px 0 6px;font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
 
+/* Todo 可折叠分组：整行分组头可点，右侧显示 已完成/总数 */
+.todo-sec{border-bottom:1px dashed var(--border)}
+.todo-sec:last-child{border-bottom:none}
+.todo-sec-h{
+  width:100%;display:flex;align-items:center;gap:8px;background:none;border:0;
+  padding:14px 0 7px;cursor:pointer;font-family:inherit;color:var(--text-muted);
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:left;
+}
+.todo-sec-h:active{opacity:.85}
+.todo-sec-t{flex:1;min-width:0}
+.todo-sec-n{font-size:10px;font-weight:700;letter-spacing:.5px;padding:1px 7px;border-radius:100px;background:var(--bg);color:var(--text-muted);text-transform:none}
+.todo-sec-n.all{background:var(--success-bg);color:var(--success)}
+.todo-sec-arrow{flex-shrink:0;font-size:12px;transition:transform .25s}
+.todo-sec.collapsed .todo-sec-arrow{transform:rotate(-90deg)}
+.todo-sec.collapsed .todo-sec-b{display:none}
+.todo-all{
+  margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;
+  color:var(--accent-2);background:none;border:1px solid var(--border);border-radius:100px;
+  padding:3px 11px;cursor:pointer;font-family:inherit;flex-shrink:0;
+}
+.todo-all:active{opacity:.85}
+
 /* ===== Tips ===== */
 .tip-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);border-left:3px solid var(--accent)}
 .tip-card.warn{border-left-color:var(--warn);background:var(--warn-bg)}
@@ -837,7 +859,7 @@ footer a{color:var(--text-faint)}
 <!-- ===== 1. 待办清单 (置顶) ===== -->
 <section class="section" id="sec-todo" data-page-node-id="Sj1AdqczxpcggHJSPXyfLd">
   <div class="section-head" data-page-node-id="sTh5vP9kcWaXjCcNcrc4ue">
-    <div class="section-title" data-page-node-id="FfePz0nbKJIAPA3Y4tlnjI">📋 待办清单</div>
+    <div class="section-title" data-page-node-id="FfePz0nbKJIAPA3Y4tlnjI">📋 待办清单<button type="button" class="todo-all" id="todo-all">全部收起</button></div>
     <div class="section-subtitle" data-page-node-id="hJW3vJFgWzub6X1EGyrF3d">办完一项告诉我，我更新代码 · 状态标记为我目前掌握情况</div>
   </div>
   <div class="todo-card" id="todo" data-page-node-id="PgTr940BRDIutZ63LKJr2x"></div>
@@ -1574,15 +1596,14 @@ const TODOS = [
   {d:true, t:'卢浮宫 10/5 14:00', s:'✅ 绑定 PMP · Porte des Lions 通道'},
 
   {section:'📑 行前准备 (10/7 前)'},
-  {d:false, t:'申根签证 / 居留 (如需)', s:'西班牙+法国申根'},
-  {d:false, t:'eSIM 卡', s:'Airalo / Nomad · 5GB €10 起 · 落地即用'},
-  {d:false, t:'换汇 / ATM 提现', s:'华夏银行借记卡欧洲 ATM 首笔免手续费 · 备 €200 现金'},
-  {d:false, t:'旅行保险', s:'申根要求 €30k 医疗保额 · 平安 / 美亚'},
-  {d:false, t:'下载离线地图', s:'Google Maps + Maps.me 西班牙/法国离线包'},
-  {d:false, t:'Google 翻译 离线包', s:'西班牙语 + 法语 离线包'},
-  {d:false, t:'国际驾照 (如需自驾)', s:'本次纯公交+打车，无需'},
-  {d:false, t:'充电宝 + Type C 转换头', s:'欧标双圆头 · 万能转换头 ×2'},
-  {d:false, t:'药房清单 (常备药)', s:'感冒/肠胃/晕车/创可贴 · 海关允许的量'},
+  {d:true, t:'申根签证 / 居留', s:'✅ 西班牙+法国申根'},
+  {d:true, t:'eSIM 卡', s:'✅ Airalo / Nomad · 5GB €10 起 · 落地即用'},
+  {d:true, t:'换汇 / ATM 提现', s:'✅ 华夏银行借记卡欧洲 ATM 首笔免手续费 · 备 €200 现金'},
+  {d:true, t:'旅行保险', s:'✅ 申根要求 €30k 医疗保额 · 平安 / 美亚'},
+  {d:false, t:'下载离线地图', s:'Google Maps 离线包：巴塞罗那 / 尼斯 / 巴黎 主城区各下一份 · 再备一个离线导航 App 兜底'},
+  {d:false, t:'Google 翻译 离线包 (可选)', s:'eSIM 有网时在线翻译更准 · 只建议下西班牙语包兜底，法语包可略'},
+  {d:true, t:'充电宝 + Type C 转换头', s:'✅ 欧标双圆头 · 万能转换头 ×2'},
+  {d:false, t:'药房清单 (常备药)', s:'感冒 / 肠胃 / 晕车 / 创可贴 · 海关允许的量'},
 
   {section:'🛍 购物与退税'},
   {d:false, t:'巴塞罗那购物清单', s:'9/30 Portal de l\'Àngel / El Corte Inglés 办退税单'},
@@ -1842,21 +1863,78 @@ function renderDays() {
   `}).join('');
 }
 
-// 渲染待办
+/* 渲染待办：按 section 切成可折叠分组
+   —— 分组头整行可点，右侧显示 已完成/总数；
+   —— 默认：还有未办项的分组展开，全部办完的分组收起；
+   —— 展开/收起状态按分组名记在本机，下次打开保持（换设备或清缓存回到默认）。 */
+var TODO_COL_KEY = 'eu26-todo-open-v1';
+
+function todoGroups() {
+  const groups = [];
+  let cur = null;
+  for (const t of TODOS) {
+    if (t.section) { cur = { title: t.section, items: [] }; groups.push(cur); }
+    else if (cur) { cur.items.push(t); }
+  }
+  return groups;
+}
+function loadTodoOpen() {
+  try { return JSON.parse(localStorage.getItem(TODO_COL_KEY) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function saveTodoOpen() {
+  const m = {};
+  document.querySelectorAll('.todo-sec').forEach(sec => {
+    m[sec.getAttribute('data-title') || ''] = !sec.classList.contains('collapsed');
+  });
+  try { localStorage.setItem(TODO_COL_KEY, JSON.stringify(m)); } catch (e) { /* 无痕模式忽略 */ }
+}
+function updateTodoAllBtn() {
+  const secs = document.querySelectorAll('.todo-sec');
+  const anyOpen = Array.prototype.some.call(secs, s => !s.classList.contains('collapsed'));
+  const btn = document.getElementById('todo-all');
+  if (btn) btn.textContent = anyOpen ? '全部收起' : '全部展开';
+}
 function renderTodo() {
   const root = document.getElementById('todo');
-  root.innerHTML = TODOS.map(t => {
-    if (t.section) return `<div class="todo-section">${t.section}</div>`;
+  if (!root) return;
+  const saved = loadTodoOpen();
+  root.innerHTML = todoGroups().map(g => {
+    const done = g.items.filter(x => x.d).length;
+    const allDone = done === g.items.length;
+    const open = (g.title in saved) ? saved[g.title] : !allDone;
     return `
-      <div class="todo ${t.d ? 'done' : ''}">
-        <div class="todo-mark">${t.d ? '✓' : '○'}</div>
-        <div class="todo-content">
-          <div class="todo-text">${t.t}</div>
-          <small>${t.s}</small>
+      <div class="todo-sec ${open ? '' : 'collapsed'}" data-title="${g.title}">
+        <button type="button" class="todo-sec-h" data-todo-toggle aria-expanded="${open}">
+          <span class="todo-sec-t">${g.title}</span>
+          <span class="todo-sec-n ${allDone ? 'all' : ''}">${done}/${g.items.length}${allDone ? ' ✓' : ''}</span>
+          <span class="todo-sec-arrow">▾</span>
+        </button>
+        <div class="todo-sec-b">
+          ${g.items.map(t => `
+            <div class="todo ${t.d ? 'done' : ''}">
+              <div class="todo-mark">${t.d ? '✓' : '○'}</div>
+              <div class="todo-content">
+                <div class="todo-text">${t.t}</div>
+                <small>${t.s}</small>
+              </div>
+            </div>
+          `).join('')}
         </div>
       </div>
     `;
   }).join('');
+
+  root.querySelectorAll('[data-todo-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = btn.closest('.todo-sec');
+      const open = !sec.classList.toggle('collapsed');
+      btn.setAttribute('aria-expanded', String(open));
+      saveTodoOpen();
+      updateTodoAllBtn();
+    });
+  });
+  updateTodoAllBtn();
 }
 
 // ===== 口令解锁 =====
@@ -1933,6 +2011,23 @@ function init() {
   if (first) first.classList.remove('collapsed');
   // 当前位置时间戳
   document.getElementById('last-update').textContent = new Date().toLocaleString('zh-CN', { hour12: false });
+
+  // 待办：全部展开 / 全部收起
+  const todoAll = document.getElementById('todo-all');
+  if (todoAll) {
+    todoAll.addEventListener('click', () => {
+      const anyOpen = Array.prototype.some.call(
+        document.querySelectorAll('.todo-sec'), s => !s.classList.contains('collapsed'));
+      const open = !anyOpen;
+      document.querySelectorAll('.todo-sec').forEach(sec => {
+        sec.classList.toggle('collapsed', !open);
+        const btn = sec.querySelector('[data-todo-toggle]');
+        if (btn) btn.setAttribute('aria-expanded', String(open));
+      });
+      saveTodoOpen();
+      updateTodoAllBtn();
+    });
+  }
 
   // 口令输入回车确认
   document.getElementById('qr-pw').addEventListener('keydown', e => {
